@@ -1,2 +1,2 @@
 # PiTankGo
-Un juguete robótico para la Raspberri Pi
+A robotic toy for Raspberri Pi
