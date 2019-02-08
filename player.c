@@ -24,7 +24,7 @@
 //
 //------------------------------------------------------
 
-// Asingar al objecto p_efecto los atributos dados.
+// Asignar al objecto p_efecto los atributos dados.
 
 int InicializaEfecto (TipoEfecto *p_efecto, char *nombre, int *array_frecuencias, int *array_duraciones, int num_notas) {
 
@@ -32,6 +32,7 @@ int InicializaEfecto (TipoEfecto *p_efecto, char *nombre, int *array_frecuencias
 	// ...
 	strcpy(p_efecto->nombre,nombre);
 	//p_efecto->nombre = nombre;
+	int i = 0;
 
 	for (i=0; i<num_notas; i++) {
 		p_efecto->frecuencias[i] = array_frecuencias[i];
@@ -40,7 +41,7 @@ int InicializaEfecto (TipoEfecto *p_efecto, char *nombre, int *array_frecuencias
 
 	p_efecto->num_notas = num_notas;
 
-	return ;
+	return p_efecto->num_notas;
 }
 
 // Procedimiento de inicializacion del objeto especifico
@@ -48,6 +49,9 @@ int InicializaEfecto (TipoEfecto *p_efecto, char *nombre, int *array_frecuencias
 void InicializaPlayer (TipoPlayer *p_player) {
 	// A completar por el alumno
 	// ...
+	p_player->posicion_nota_actual = 0;
+	p_player->frecuencia_nota_actual;
+	p_player->posicion_nota_actual;
 }
 
 //------------------------------------------------------
@@ -57,9 +61,10 @@ void InicializaPlayer (TipoPlayer *p_player) {
 int CompruebaStartDisparo (fsm_t* this) {
 	int result = 0;
 
-	piLock (FLAGS_KEY);
+	piLock (PLAYER_FLAGS_KEY);
 	result = (flags & FLAG_TECLA_ON);
-	piUnlock (FLAGS_KEY);
+	piUnlock (PLAYER_FLAGS_KEY);
+
 
 	return result;
 }
