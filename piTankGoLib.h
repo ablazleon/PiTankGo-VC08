@@ -71,7 +71,7 @@
 #define FLAG_START_IMPACTO 		0x02
 #define FLAG_PLAYER_STOP 		0x04
 #define FLAG_PLAYER_END			0x16
-#define FLAG_NOTA_TIMEOUT		0x032
+#define FLAG_NOTA_TIMEOUT		0x32
 
 enum interruption_sources {
 	TARGET_ISR,

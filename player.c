@@ -83,10 +83,12 @@ int CompruebaNuevaNota (fsm_t* this){
 	int result = 0;
 
 	piLock (PLAYER_FLAGS_KEY);
-	result = (flags_juego & FLAG_PLAYER_STOP);
+	result = ~(flags_juego & FLAG_PLAYER_END);
 	piUnlock (PLAYER_FLAGS_KEY);
 
 	return result;
+
+
 }
 
 int CompruebaNotaTimeout (fsm_t* this) {
@@ -174,19 +176,58 @@ void InicializaPlayImpacto (fsm_t* this) {
 
 }
 
+/*
+ * Habiendo comprobado FLAG_PLAY_END, mostramos por pantalla cada una de las notas del array.
+ */
+
 void ComienzaNuevaNota (fsm_t* this) {
-	// A completar por el alumno
-	// ...
+
+	TipoPlayer *p_player;
+	p_player = (TipoPlayer*) (this->user_data);
+	piLock(PLAYER_FLAGS_KEY);
+	flags_juego &= ~(FLAG_PLAYER_END);
+	piUnlock(PLAYER_FLAGS_KEY);
+
+	piLock(STD_IO_BUFFER_KEY);
+	printf("[PLAYER][ComienzaNuevaNota][Nota %d][Frecuencia %d][Duracion %d] \n",p_player->posicion_nota_actual+1,p_player->frecuencia_nota_actual,p_player->duracion_nota_actual);
+	piUnlock(STD_IO_BUFFER_KEY);
+
+
+
 }
 
 void ActualizaPlayer (fsm_t* this) {
-	// A completar por el alumno
-	// ...
+
+	TipoPlayer *p_player;
+	p_player = (TipoPlayer*) (this->user_data);
+
+	//Comprobamos si la nota es la ultima o no.
+	//En caso de que no: avanzamos una nota
+	//En caso de que si: avisamos que la melodia ha terminado
+	p_player->posicion_nota_actual++;
+	if(p_player->posicion_nota_actual < p_player->p_efecto->num_notas){
+			p_player->frecuencia_nota_actual=p_player->p_efecto->frecuencias[p_player->posicion_nota_actual];
+			p_player->duracion_nota_actual= p_player->p_efecto->duraciones[p_player->posicion_nota_actual];
+
+			piLock(PLAYER_FLAGS_KEY);
+			flags_juego &= ~(FLAG_NOTA_TIMEOUT);
+			piUnlock(PLAYER_FLAGS_KEY);
+	} else{
+		piLock(PLAYER_FLAGS_KEY);
+		flags_juego |= FLAG_PLAYER_END;
+		piUnlock(PLAYER_FLAGS_KEY);
+
+		piLock(STD_IO_BUFFER_KEY);
+		printf("[FinalMelodia]");
+		fflush(stdout);
+		piUnlock(STD_IO_BUFFER_KEY);
+	}
 }
 
 void FinalEfecto (fsm_t* this) {
-	// A completar por el alumno
-	// ...
+	piLock(PLAYER_FLAGS_KEY);
+	flags_juego &= ~(FLAG_PLAYER_END);
+	piUnlock(PLAYER_FLAGS_KEY);
 }
 
 //------------------------------------------------------

@@ -83,8 +83,16 @@ PI_THREAD (thread_explora_teclado_PC) {
 			teclaPulsada = kbread();
 
 			switch(teclaPulsada) {
-				// A completar por el alumno...
-				// ...
+				case 't':
+
+					piLock (PLAYER_FLAGS_KEY);
+					flags_juego |= FLAG_PLAYER_STOP;
+					piUnlock (PLAYER_FLAGS_KEY);
+
+					printf("Tecla T pulsada!\n");
+					fflush(stdout);
+					break;
+
 				case 's':  //tecla de disparo
 
 					piLock (PLAYER_FLAGS_KEY);
