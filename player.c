@@ -62,7 +62,7 @@ int CompruebaStartDisparo (fsm_t* this) {
 	int result = 0;
 
 	piLock (PLAYER_FLAGS_KEY);
-	result = (flags & FLAG_TECLA_ON);
+	result = (flags_juego & FLAG_START_DISPARO);
 	piUnlock (PLAYER_FLAGS_KEY);
 
 
@@ -72,8 +72,9 @@ int CompruebaStartDisparo (fsm_t* this) {
 int CompruebaStartImpacto (fsm_t* this) {
 	int result = 0;
 
-	// A completar por el alumno
-	// ...
+	piLock (PLAYER_FLAGS_KEY);
+	result = (flags_juego & FLAG_START_IMPACTO);
+	piUnlock (PLAYER_FLAGS_KEY);
 
 	return result;
 }
@@ -81,8 +82,9 @@ int CompruebaStartImpacto (fsm_t* this) {
 int CompruebaNuevaNota (fsm_t* this){
 	int result = 0;
 
-	// A completar por el alumno
-	// ...
+	piLock (PLAYER_FLAGS_KEY);
+	result = (flags_juego & FLAG_PLAYER_STOP);
+	piUnlock (PLAYER_FLAGS_KEY);
 
 	return result;
 }
@@ -90,8 +92,9 @@ int CompruebaNuevaNota (fsm_t* this){
 int CompruebaNotaTimeout (fsm_t* this) {
 	int result = 0;
 
-	// A completar por el alumno
-	// ...
+	piLock (PLAYER_FLAGS_KEY);
+	result = (flags_juego & FLAG_NOTA_TIMEOUT);
+	piUnlock (PLAYER_FLAGS_KEY);
 
 	return result;
 }
@@ -99,8 +102,9 @@ int CompruebaNotaTimeout (fsm_t* this) {
 int CompruebaFinalEfecto (fsm_t* this) {
 	int result = 0;
 
-	// A completar por el alumno
-	// ...
+	piLock (PLAYER_FLAGS_KEY);
+	result = (flags_juego & FLAG_PLAYER_END);
+	piUnlock (PLAYER_FLAGS_KEY);
 
 	return result;
 }
@@ -110,8 +114,32 @@ int CompruebaFinalEfecto (fsm_t* this) {
 //------------------------------------------------------
 
 void InicializaPlayDisparo (fsm_t* this) {
-	// A completar por el alumno
-	// ...
+
+	TipoPlayer *p_player; // Creamos variable TipoPlayer
+
+	// Hacemos un casting de TipoPlayer a los datos pasados en piTankGo_1.c
+	// => fsm_t* player_fsm = fsm_new (WAIT_START, reproductor, &(sistema.player));
+
+	p_player = (TipoPlayer*)(this->user_data);
+
+	//Incializamos el efecto disparo
+
+	inicializaEfecto(p_player,"disparo",frecuenciasDisparo,tiemposDisparo,16);
+
+
+	piLock (PLAYER_FLAGS_KEY);
+
+	flags_juego &= ~FLAG_START_DISPARO;
+	flags_juego &= ~FLAG_START_IMPACTO;
+	flags_juego &= ~FLAG_PLAYER_STOP;
+	flags_juego &= ~FLAG_NOTA_TIMEOUT;
+	flags_juego &= ~FLAG_PLAYER_END;
+
+	piUnlock (PLAYER_FLAGS_KEY);
+
+	piLock (STD_IO_BUFFER_KEY);
+	printf("");
+	piUnlock (STD_IO_BUFFER_KEY);
 }
 
 void InicializaPlayImpacto (fsm_t* this) {
