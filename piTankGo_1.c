@@ -28,18 +28,10 @@ int flags_player = 0;
 // configurar las interrupciones externas asociadas a los pines GPIO,
 // configurar las interrupciones periódicas y sus correspondientes temporizadores,
 // crear, si fuese necesario, los threads adicionales que pueda requerir el sistema
-
 int ConfiguraSistema (TipoSistema *p_sistema) {
 	int result = 0;
-
-	piLock (STD_IO_BUFFER_KEY);
-
-	wiringPiSetupGpio();
-	pinMode (23, OUTPUT); //declaro pin 23 como salida
-	//Hace falta algo más? Las entradas estan en el teclado del ordenador
-
-	piLock (STD_IO_BUFFER_KEY);
-
+	// A completar por el alumno...
+	// ...
 
 	return result;
 }
@@ -49,12 +41,11 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 // la inicializacion de los diferentes elementos de los que consta nuestro sistema,
 // la torreta, los efectos, etc.
 // igualmente arrancará el thread de exploración del teclado del PC
-
 int InicializaSistema (TipoSistema *p_sistema) {
 	int result = 0;
 
-	//Qué hay que inicializar aqui??
-
+	// A completar por el alumno...
+	// ...
 
 	// Lanzamos thread para exploracion del teclado convencional del PC
 	result = piThreadCreate (thread_explora_teclado_PC);
@@ -85,12 +76,9 @@ PI_THREAD (thread_explora_teclado_PC) {
 			switch(teclaPulsada) {
 				// A completar por el alumno...
 				// ...
-				case 's':  //tecla de disparo
-
-					piLock (PLAYER_FLAGS_KEY);
-					flags_juego |= FLAG_START_DISPARO;
-					piUnlock (PLAYER_FLAGS_KEY);
-
+				case 's':
+					// A completar por el alumno...
+					// ...
 					printf("Tecla S pulsada!\n");
 					fflush(stdout);
 					break;

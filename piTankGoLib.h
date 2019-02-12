@@ -17,9 +17,9 @@
 
 // CLAVES PARA MUTEX
 // ATENCION: Valores a modificar por el alumno
-#define	SYSTEM_FLAGS_KEY	1
-#define	PLAYER_FLAGS_KEY	2
-#define	STD_IO_BUFFER_KEY	3
+#define	SYSTEM_FLAGS_KEY	0
+#define	PLAYER_FLAGS_KEY	0
+#define	STD_IO_BUFFER_KEY	0
 
 // Distribucion de pines GPIO empleada para el teclado
 // ATENCION: Valores a modificar por el alumno
@@ -67,11 +67,11 @@
 
 // FLAGS FSM REPRODUCCION DE EFECTOS DE SONIDO
 // ATENCION: Valores a modificar por el alumno
-#define FLAG_START_DISPARO 		0x01
-#define FLAG_START_IMPACTO 		0x02
-#define FLAG_PLAYER_STOP 		0x04
-#define FLAG_PLAYER_END			0x16
-#define FLAG_NOTA_TIMEOUT		0x032
+#define FLAG_START_DISPARO 		0x00
+#define FLAG_START_IMPACTO 		0x00
+#define FLAG_PLAYER_STOP 		0x00
+#define FLAG_PLAYER_END			0x00
+#define FLAG_NOTA_TIMEOUT		0x00
 
 enum interruption_sources {
 	TARGET_ISR,
