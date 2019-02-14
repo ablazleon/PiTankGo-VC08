@@ -16,7 +16,10 @@
 #define SHOOTING_PERIOD 0
 
 // CLAVES PARA MUTEX
-// ATENCION: Valores a modificar por el alumno
+// Claves únicas de cada flag
+// Permiten la exclusión mutua entre las hebras del programa
+// Estas son, la hebra principal que se ejecuta en el main de piTankGo y las hebras craedas por la fsm
+// Garantizan la consistencia de los estados
 #define	SYSTEM_FLAGS_KEY	1
 #define	PLAYER_FLAGS_KEY	2
 #define	STD_IO_BUFFER_KEY	3
