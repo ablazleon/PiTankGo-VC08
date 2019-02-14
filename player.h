@@ -34,8 +34,7 @@ typedef struct {
 	TipoEfecto efecto_disparo; // Efecto de disparo
 	TipoEfecto efecto_impacto; // Efecto de impacto
 
-	// A completar por el alumno (declaracion del temporizador para control duracion notas)
-	// ...
+	tmr_t* myTmr;
 
 } TipoPlayer;
 

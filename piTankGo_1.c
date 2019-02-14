@@ -40,7 +40,7 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 
 	piLock (STD_IO_BUFFER_KEY);
 
-	p_sistema->player.tmr = tmr_new(timer_player_duracion_nota_actual_isr);
+	p_sistema->player.myTmr = tmr_new(timer_player_duracion_nota_actual_isr);
 
 	return result;
 }
@@ -87,7 +87,7 @@ PI_THREAD (thread_explora_teclado_PC) {
 				case 't':
 
 					piLock (PLAYER_FLAGS_KEY);
-					flags_juego |= FLAG_PLAYER_STOP;
+					flags_player |= FLAG_PLAYER_STOP;
 					piUnlock (PLAYER_FLAGS_KEY);
 
 					printf("Tecla T pulsada!\n");
@@ -97,7 +97,7 @@ PI_THREAD (thread_explora_teclado_PC) {
 				case 's':  //tecla de disparo
 
 					piLock (PLAYER_FLAGS_KEY);
-					flags_juego |= FLAG_START_DISPARO;
+					flags_player |= FLAG_START_DISPARO;
 					piUnlock (PLAYER_FLAGS_KEY);
 
 					printf("Tecla S pulsada!\n");

@@ -62,7 +62,7 @@ int CompruebaStartDisparo (fsm_t* this) {
 	int result = 0;
 
 	piLock (PLAYER_FLAGS_KEY);
-	result = (flags_juego & FLAG_START_DISPARO);
+	result = (flags_player & FLAG_START_DISPARO);
 	piUnlock (PLAYER_FLAGS_KEY);
 
 
@@ -73,7 +73,7 @@ int CompruebaStartImpacto (fsm_t* this) {
 	int result = 0;
 
 	piLock (PLAYER_FLAGS_KEY);
-	result = (flags_juego & FLAG_START_IMPACTO);
+	result = (flags_player & FLAG_START_IMPACTO);
 	piUnlock (PLAYER_FLAGS_KEY);
 
 	return result;
@@ -83,7 +83,7 @@ int CompruebaNuevaNota (fsm_t* this){
 	int result = 0;
 
 	piLock (PLAYER_FLAGS_KEY);
-	result = ~(flags_juego & FLAG_PLAYER_END);
+	result = ~(flags_player & FLAG_PLAYER_END);
 	piUnlock (PLAYER_FLAGS_KEY);
 
 	return result;
@@ -95,7 +95,7 @@ int CompruebaNotaTimeout (fsm_t* this) {
 	int result = 0;
 
 	piLock (PLAYER_FLAGS_KEY);
-	result = (flags_juego & FLAG_NOTA_TIMEOUT);
+	result = (flags_player & FLAG_NOTA_TIMEOUT);
 	piUnlock (PLAYER_FLAGS_KEY);
 
 	return result;
@@ -105,7 +105,7 @@ int CompruebaFinalEfecto (fsm_t* this) {
 	int result = 0;
 
 	piLock (PLAYER_FLAGS_KEY);
-	result = (flags_juego & FLAG_PLAYER_END);
+	result = (flags_player & FLAG_PLAYER_END);
 	piUnlock (PLAYER_FLAGS_KEY);
 
 	return result;
@@ -132,11 +132,11 @@ void InicializaPlayDisparo (fsm_t* this) {
 
 	piLock (PLAYER_FLAGS_KEY);
 
-	flags_juego &= ~FLAG_START_DISPARO;
-	flags_juego &= ~FLAG_START_IMPACTO; //Es necesario??
-	flags_juego &= ~FLAG_PLAYER_STOP; //Es necesario??
-	flags_juego &= ~FLAG_NOTA_TIMEOUT; //Es necesario??
-	flags_juego &= ~FLAG_PLAYER_END; //Es necesario??
+	flags_player &= ~FLAG_START_DISPARO;
+	flags_player &= ~FLAG_START_IMPACTO; //Es necesario??
+	flags_player &= ~FLAG_PLAYER_STOP; //Es necesario??
+	flags_player &= ~FLAG_NOTA_TIMEOUT; //Es necesario??
+	flags_player &= ~FLAG_PLAYER_END; //Es necesario??
 
 	piUnlock (PLAYER_FLAGS_KEY);
 
@@ -162,11 +162,11 @@ void InicializaPlayImpacto (fsm_t* this) {
 
 	piLock (PLAYER_FLAGS_KEY);
 
-	flags_juego &= ~FLAG_START_DISPARO; //Es necesario??
-	flags_juego &= ~FLAG_START_IMPACTO;
-	flags_juego &= ~FLAG_PLAYER_STOP; //Es necesario??
-	flags_juego &= ~FLAG_NOTA_TIMEOUT; //Es necesario??
-	flags_juego &= ~FLAG_PLAYER_END; //Es necesario??
+	flags_player &= ~FLAG_START_DISPARO; //Es necesario??
+	flags_player &= ~FLAG_START_IMPACTO;
+	flags_player &= ~FLAG_PLAYER_STOP; //Es necesario??
+	flags_player &= ~FLAG_NOTA_TIMEOUT; //Es necesario??
+	flags_player &= ~FLAG_PLAYER_END; //Es necesario??
 
 	piUnlock (PLAYER_FLAGS_KEY);
 
@@ -185,7 +185,7 @@ void ComienzaNuevaNota (fsm_t* this) {
 	TipoPlayer *p_player;
 	p_player = (TipoPlayer*) (this->user_data);
 	piLock(PLAYER_FLAGS_KEY);
-	flags_juego &= ~(FLAG_PLAYER_END);
+	flags_player &= ~(FLAG_PLAYER_END);
 	piUnlock(PLAYER_FLAGS_KEY);
 
 	piLock(STD_IO_BUFFER_KEY);
@@ -210,11 +210,11 @@ void ActualizaPlayer (fsm_t* this) {
 			p_player->duracion_nota_actual= p_player->p_efecto->duraciones[p_player->posicion_nota_actual];
 
 			piLock(PLAYER_FLAGS_KEY);
-			flags_juego &= ~(FLAG_NOTA_TIMEOUT);
+			flags_player &= ~(FLAG_NOTA_TIMEOUT);
 			piUnlock(PLAYER_FLAGS_KEY);
 	} else{
 		piLock(PLAYER_FLAGS_KEY);
-		flags_juego |= FLAG_PLAYER_END;
+		flags_player |= FLAG_PLAYER_END;
 		piUnlock(PLAYER_FLAGS_KEY);
 
 		piLock(STD_IO_BUFFER_KEY);
@@ -226,7 +226,7 @@ void ActualizaPlayer (fsm_t* this) {
 
 void FinalEfecto (fsm_t* this) {
 	piLock(PLAYER_FLAGS_KEY);
-	flags_juego &= ~(FLAG_PLAYER_END);
+	flags_player &= ~(FLAG_PLAYER_END);
 	piUnlock(PLAYER_FLAGS_KEY);
 }
 
@@ -237,7 +237,7 @@ void FinalEfecto (fsm_t* this) {
 static void timer_player_duracion_nota_actual_isr (union sigval value) {
 
 	piLock (PLAYER_FLAGS_KEY);
-	flags_juego |= FLAG_NOTA_TIMEOUT;
+	flags_player |= FLAG_NOTA_TIMEOUT;
 	piLock (PLAYER_FLAGS_KEY);
 
 }
