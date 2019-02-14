@@ -1,5 +1,6 @@
 
 #include "player.h"
+#include <string.h>
 
 //------------------------------------------------------
 // PROCEDIMIENTOS DE INICIALIZACION DE LOS OBJETOS ESPECIFICOS
@@ -124,27 +125,29 @@ void InicializaPlayDisparo (fsm_t* this) {
 
 	p_player = (TipoPlayer*)(this->user_data);
 
+	TipoEfecto efecto_disparo;
+
 	//Incializamos el efecto disparo
 
-	int resIncializaEfecto = InicializaEfecto(p_player,"disparo",frecuenciasDisparo,tiemposDisparo,16);
+	int resIncializaEfecto = InicializaEfecto(&efecto_disparo,"disparo",frecuenciasDisparo,tiemposDisparo,16);
 	if(resIncializaEfecto < 0){
 		printf("Error\n");
 	}
+	p_player->p_efecto = &efecto_disparo;
+
 	InicializaPlayer(p_player);
 
 
 	piLock (PLAYER_FLAGS_KEY);
 
 	flags_player &= ~FLAG_START_DISPARO;
-	flags_player &= ~FLAG_START_IMPACTO; //Es necesario??
-	flags_player &= ~FLAG_PLAYER_STOP; //Es necesario??
-	flags_player &= ~FLAG_NOTA_TIMEOUT; //Es necesario??
-	flags_player &= ~FLAG_PLAYER_END; //Es necesario??
+
 
 	piUnlock (PLAYER_FLAGS_KEY);
 
 	piLock (STD_IO_BUFFER_KEY);
 	printf("Inicializa Disparo");
+
 	piUnlock (STD_IO_BUFFER_KEY);
 }
 
@@ -157,9 +160,11 @@ void InicializaPlayImpacto (fsm_t* this) {
 
 	p_player = (TipoPlayer*)(this->user_data);
 
-	//Incializamos el efecto disparo
+	//Incializamos el efecto impacto
 
-	int resIncializaEfecto = InicializaEfecto(p_player,"impacto",frecuenciasImpacto,tiemposImpacto,32 );
+	TipoEfecto efecto_impacto;
+
+	int resIncializaEfecto = InicializaEfecto(&efecto_impacto,"impacto",frecuenciasImpacto,tiemposImpacto,32 );
 	if(resIncializaEfecto < 0){
 		printf("Error\n");
 	}
@@ -168,16 +173,13 @@ void InicializaPlayImpacto (fsm_t* this) {
 
 	piLock (PLAYER_FLAGS_KEY);
 
-	flags_player &= ~FLAG_START_DISPARO; //Es necesario??
 	flags_player &= ~FLAG_START_IMPACTO;
-	flags_player &= ~FLAG_PLAYER_STOP; //Es necesario??
-	flags_player &= ~FLAG_NOTA_TIMEOUT; //Es necesario??
-	flags_player &= ~FLAG_PLAYER_END; //Es necesario??
+
 
 	piUnlock (PLAYER_FLAGS_KEY);
 
 	piLock (STD_IO_BUFFER_KEY);
-	printf("Inicializa Impactos");
+	printf("Inicializa Impactos\n");
 	piUnlock (STD_IO_BUFFER_KEY);
 
 }
@@ -232,7 +234,7 @@ void ActualizaPlayer (fsm_t* this) {
 
 void FinalEfecto (fsm_t* this) {
 	piLock(PLAYER_FLAGS_KEY);
-	flags_player &= ~(FLAG_PLAYER_END);
+	flags_player &= (FLAG_PLAYER_END);
 	piUnlock(PLAYER_FLAGS_KEY);
 }
 
@@ -240,6 +242,7 @@ void FinalEfecto (fsm_t* this) {
 // PROCEDIMIENTOS DE ATENCION A LAS INTERRUPCIONES
 //------------------------------------------------------
 
+/*
 static void timer_player_duracion_nota_actual_isr (union sigval value) {
 
 	piLock (PLAYER_FLAGS_KEY);
@@ -247,3 +250,4 @@ static void timer_player_duracion_nota_actual_isr (union sigval value) {
 	piLock (PLAYER_FLAGS_KEY);
 
 }
+*/

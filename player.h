@@ -59,6 +59,6 @@ void ActualizaPlayer (fsm_t* this);
 void FinalEfecto (fsm_t* this);
 
 // Prototipos de procedimientos de atencion a las interrupciones
-static void timer_player_duracion_nota_actual_isr (union sigval value);
+//static void timer_player_duracion_nota_actual_isr (union sigval value);
 
 #endif /* PLAYER_H_ */

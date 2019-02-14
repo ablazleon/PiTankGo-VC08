@@ -38,9 +38,9 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 	pinMode (23, OUTPUT); //declaro pin 23 como salida
 	//Hace falta algo más? Las entradas estan en el teclado del ordenador
 
-	piLock (STD_IO_BUFFER_KEY);
+	piUnlock (STD_IO_BUFFER_KEY);
 
-	p_sistema->player.myTmr = tmr_new(timer_player_duracion_nota_actual_isr);
+	//p_sistema->player.myTmr = tmr_new(timer_player_duracion_nota_actual_isr);
 
 	return result;
 }
@@ -148,12 +148,14 @@ int main ()
 	};
 
 	fsm_t* player_fsm = fsm_new (WAIT_START, reproductor, &(sistema.player));
+
 	// A completar por el alumno...
 	// ...
 
 	next = millis();
 	while (1) {
 		fsm_fire (player_fsm);
+
 		// A completar por el alumno...
 		// ...
 
