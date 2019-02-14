@@ -1,6 +1,7 @@
 
 #include "player.h"
 #include <string.h>
+#include <softTone.h>
 
 //------------------------------------------------------
 // PROCEDIMIENTOS DE INICIALIZACION DE LOS OBJETOS ESPECIFICOS
@@ -139,6 +140,9 @@ void InicializaPlayDisparo (fsm_t* this) {
 
 	printf("[PLAYER][ComienzaNuevaNota][Nota %d][Frecuencia %d][Duracion %d] \n",p_player->posicion_nota_actual+1,p_player->frecuencia_nota_actual,p_player->duracion_nota_actual);
 
+	// Se generan los sonidos
+	softToneWrite(23, p_player->frecuencia_nota_actual);
+
 	piLock (PLAYER_FLAGS_KEY);
 
 	flags_player &= ~FLAG_START_DISPARO;
@@ -200,6 +204,10 @@ void ComienzaNuevaNota (fsm_t* this) {
 
 	piLock(STD_IO_BUFFER_KEY);
 	printf("[PLAYER][ComienzaNuevaNota][Nota %d][Frecuencia %d][Duracion %d] \n",p_player->posicion_nota_actual+1,p_player->frecuencia_nota_actual,p_player->duracion_nota_actual);
+
+	// Generamos una nota
+	softToneWrite(23, p_player->frecuencia_nota_actual);
+
 	piUnlock(STD_IO_BUFFER_KEY);
 
 
