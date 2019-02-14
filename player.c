@@ -137,6 +137,7 @@ void InicializaPlayDisparo (fsm_t* this) {
 
 	InicializaPlayer(p_player);
 
+	printf("[PLAYER][ComienzaNuevaNota][Nota %d][Frecuencia %d][Duracion %d] \n",p_player->posicion_nota_actual+1,p_player->frecuencia_nota_actual,p_player->duracion_nota_actual);
 
 	piLock (PLAYER_FLAGS_KEY);
 
@@ -169,6 +170,7 @@ void InicializaPlayImpacto (fsm_t* this) {
 		printf("Error\n");
 	}
 	InicializaPlayer(p_player);
+
 
 
 	piLock (PLAYER_FLAGS_KEY);
