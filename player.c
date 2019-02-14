@@ -126,7 +126,10 @@ void InicializaPlayDisparo (fsm_t* this) {
 
 	//Incializamos el efecto disparo
 
-	inicializaEfecto(p_player,"disparo",frecuenciasDisparo,tiemposDisparo,16);
+	int resIncializaEfecto = InicializaEfecto(p_player,"disparo",frecuenciasDisparo,tiemposDisparo,16);
+	if(resIncializaEfecto < 0){
+		printf("Error\n");
+	}
 	InicializaPlayer(p_player);
 
 
@@ -156,7 +159,10 @@ void InicializaPlayImpacto (fsm_t* this) {
 
 	//Incializamos el efecto disparo
 
-	inicializaEfecto(p_player,"impacto",frecuenciasImpacto,tiemposImpacto,32);
+	int resIncializaEfecto = InicializaEfecto(p_player,"impacto",frecuenciasImpacto,tiemposImpacto,32 );
+	if(resIncializaEfecto < 0){
+		printf("Error\n");
+	}
 	InicializaPlayer(p_player);
 
 
