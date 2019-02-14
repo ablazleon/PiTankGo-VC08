@@ -84,6 +84,15 @@ PI_THREAD (thread_explora_teclado_PC) {
 			teclaPulsada = kbread();
 
 			switch(teclaPulsada) {
+				case 'j' :
+					piLock (PLAYER_FLAGS_KEY);
+						flags_player |= FLAG_NOTA_TIMEOUT;
+					piUnlock (PLAYER_FLAGS_KEY);
+
+					printf("Tecla J pulsada!\n");
+					fflush(stdout);
+					break;
+
 				case 't':
 
 					piLock (PLAYER_FLAGS_KEY);
@@ -98,7 +107,7 @@ PI_THREAD (thread_explora_teclado_PC) {
 
 					piLock (PLAYER_FLAGS_KEY);
 					flags_player |= FLAG_START_DISPARO;
-					flags_player |= FLAG_NOTA_TIMEOUT;
+
 					piUnlock (PLAYER_FLAGS_KEY);
 
 					printf("Tecla S pulsada!\n");
