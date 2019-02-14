@@ -146,7 +146,7 @@ void InicializaPlayDisparo (fsm_t* this) {
 	piUnlock (PLAYER_FLAGS_KEY);
 
 	piLock (STD_IO_BUFFER_KEY);
-	printf("Inicializa Disparo");
+	printf("Inicializa Disparo\n");
 
 	piUnlock (STD_IO_BUFFER_KEY);
 }

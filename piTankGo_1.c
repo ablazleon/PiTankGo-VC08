@@ -98,6 +98,7 @@ PI_THREAD (thread_explora_teclado_PC) {
 
 					piLock (PLAYER_FLAGS_KEY);
 					flags_player |= FLAG_START_DISPARO;
+					flags_player |= FLAG_NOTA_TIMEOUT;
 					piUnlock (PLAYER_FLAGS_KEY);
 
 					printf("Tecla S pulsada!\n");
