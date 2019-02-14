@@ -235,6 +235,9 @@ void FinalEfecto (fsm_t* this) {
 //------------------------------------------------------
 
 static void timer_player_duracion_nota_actual_isr (union sigval value) {
-	// A completar por el alumno...
-	// ...
+
+	piLock (PLAYER_FLAGS_KEY);
+	flags_juego |= FLAG_NOTA_TIMEOUT;
+	piLock (PLAYER_FLAGS_KEY);
+
 }

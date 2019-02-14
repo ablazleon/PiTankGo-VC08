@@ -40,6 +40,7 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 
 	piLock (STD_IO_BUFFER_KEY);
 
+	p_sistema->player.tmr = tmr_new(timer_player_duracion_nota_actual_isr);
 
 	return result;
 }

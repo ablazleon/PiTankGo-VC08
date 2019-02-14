@@ -63,6 +63,6 @@ void ImpactoDetectado (fsm_t* this);
 void FinalizaJuego (fsm_t* this);
 
 // Prototipos de procedimientos de atencion a las interrupciones
-static void timer_duracion_disparo_isr (union sigval value);
+//static void timer_duracion_disparo_isr (union sigval value);
 
 #endif /* _TORRETA_H_ */
