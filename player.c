@@ -54,6 +54,7 @@ void InicializaPlayer (TipoPlayer *p_player) {
 	p_player->posicion_nota_actual = 0;
 	p_player->frecuencia_nota_actual = p_player->p_efecto->frecuencias[0];
 	p_player->duracion_nota_actual = p_player->p_efecto->duraciones[0];
+
 }
 
 //------------------------------------------------------
@@ -126,19 +127,7 @@ void InicializaPlayDisparo (fsm_t* this) {
 
 	p_player = (TipoPlayer*)(this->user_data);
 
-	TipoEfecto efecto_disparo;
-
-	//Incializamos el efecto disparo
-
-	int resIncializaEfecto = InicializaEfecto(&efecto_disparo,"disparo",frecuenciasDisparo,tiemposDisparo,16);
-	if(resIncializaEfecto < 0){
-		printf("Error\n");
-	}
-	p_player->p_efecto = &efecto_disparo;
-
-	InicializaPlayer(p_player);
-
-	printf("[PLAYER][ComienzaNuevaNota][Nota %d][Frecuencia %d][Duracion %d] \n",p_player->posicion_nota_actual+1,p_player->frecuencia_nota_actual,p_player->duracion_nota_actual);
+	printf("[PLAYER][ComienzaNuevaNota][Nota %d][Frecuencia %d][Duracion %d][Numero de Notas %d] \n",p_player->posicion_nota_actual+1,p_player->frecuencia_nota_actual,p_player->duracion_nota_actual, p_player->p_efecto->num_notas);
 
 	// Se generan los sonidos
 	softToneWrite(23, p_player->frecuencia_nota_actual);
@@ -203,7 +192,7 @@ void ComienzaNuevaNota (fsm_t* this) {
 	piUnlock(PLAYER_FLAGS_KEY);
 
 	piLock(STD_IO_BUFFER_KEY);
-	printf("[PLAYER][ComienzaNuevaNota][Nota %d][Frecuencia %d][Duracion %d] \n",p_player->posicion_nota_actual+1,p_player->frecuencia_nota_actual,p_player->duracion_nota_actual);
+	printf("[PLAYER][ComienzaNuevaNota][Nota %d][Frecuencia %d][Duracion %d][Numero de Notas %d] \n",p_player->posicion_nota_actual+1,p_player->frecuencia_nota_actual,p_player->duracion_nota_actual, p_player->p_efecto->num_notas);
 
 	// Generamos una nota
 	softToneWrite(23, p_player->frecuencia_nota_actual);
@@ -223,13 +212,15 @@ void ActualizaPlayer (fsm_t* this) {
 	//En caso de que no: avanzamos una nota
 	//En caso de que si: avisamos que la melodia ha terminado
 	p_player->posicion_nota_actual++;
-	if(p_player->posicion_nota_actual < p_player->p_efecto->num_notas){
-			p_player->frecuencia_nota_actual=p_player->p_efecto->frecuencias[p_player->posicion_nota_actual];
-			p_player->duracion_nota_actual= p_player->p_efecto->duraciones[p_player->posicion_nota_actual];
 
-			piLock(PLAYER_FLAGS_KEY);
-			flags_player &= ~(FLAG_NOTA_TIMEOUT);
-			piUnlock(PLAYER_FLAGS_KEY);
+	if(p_player->posicion_nota_actual < p_player->p_efecto->num_notas){
+
+		p_player->frecuencia_nota_actual=p_player->p_efecto->frecuencias[p_player->posicion_nota_actual];
+		p_player->duracion_nota_actual= p_player->p_efecto->duraciones[p_player->posicion_nota_actual];
+
+		piLock(PLAYER_FLAGS_KEY);
+		flags_player &= ~(FLAG_NOTA_TIMEOUT);
+		piUnlock(PLAYER_FLAGS_KEY);
 	} else{
 		piLock(PLAYER_FLAGS_KEY);
 		flags_player |= FLAG_PLAYER_END;

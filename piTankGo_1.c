@@ -57,7 +57,16 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 int InicializaSistema (TipoSistema *p_sistema) {
 	int result = 0;
 
-	//Qué hay que inicializar aqui??
+	//Incializamos el efecto disparo
+
+
+
+	InicializaEfecto(&(p_sistema->player.efecto_disparo),"disparo",frecuenciasDisparo,tiemposDisparo,16);
+	//InicializaEfecto(&p_sistema->player.efecto_impacto,"impacto",frecuenciasImpacto,tiemposImpacto,32);
+
+	p_sistema->player.p_efecto = &(p_sistema->player.efecto_disparo);
+
+	InicializaPlayer(&p_sistema->player);
 
 
 	// Lanzamos thread para exploracion del teclado convencional del PC
