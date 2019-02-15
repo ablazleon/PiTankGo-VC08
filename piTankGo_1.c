@@ -1,5 +1,6 @@
 
 #include "piTankGo_1.h"
+#include <softTone.h>
 
 int frecuenciaDespacito[160] = {0,1175,1109,988,740,740,740,740,740,740,988,988,988,988,880,988,784,0,784,784,784,784,784,988,988,988,988,1109,1175,880,0,880,880,880,880,880,1175,1175,1175,1175,1318,1318,1109,0,1175,1109,988,740,740,740,740,740,740,988,988,988,988,880,988,784,0,784,784,784,784,784,988,988,988,988,1109,1175,880,0,880,880,880,880,880,1175,1175,1175,1175,1318,1318,1109,0,1480,1318,1480,1318,1480,1318,1480,1318,1480,1318,1480,1568,1568,1175,0,1175,1568,1568,1568,0,1568,1760,1568,1480,0,1480,1480,1480,1760,1568,1480,1318,659,659,659,659,659,659,659,659,554,587,1480,1318,1480,1318,1480,1318,1480,1318,1480,1318,1480,1568,1568,1175,0,1175,1568,1568,1568,1568,1760,1568,1480,0,1480,1480,1480,1760,1568,1480,1318};
 int tiempoDespacito[160] = {1200,600,600,300,300,150,150,150,150,150,150,150,150,300,150,300,343,112,150,150,150,150,150,150,150,150,300,150,300,300,150,150,150,150,150,150,150,150,150,300,150,300,800,300,600,600,300,300,150,150,150,150,150,150,150,150,300,150,300,343,112,150,150,150,150,150,150,150,150,300,150,300,300,150,150,150,150,150,150,150,150,150,300,150,300,450,1800,150,150,150,150,300,150,300,150,150,150,300,150,300,450,450,300,150,150,225,75,150,150,300,450,800,150,150,300,150,150,300,450,150,150,150,150,150,150,150,150,300,300,150,150,150,150,150,150,450,150,150,150,300,150,300,450,450,300,150,150,150,300,150,300,450,800,150,150,300,150,150,300,450};
@@ -28,10 +29,21 @@ int flags_player = 0;
 // configurar las interrupciones externas asociadas a los pines GPIO,
 // configurar las interrupciones periódicas y sus correspondientes temporizadores,
 // crear, si fuese necesario, los threads adicionales que pueda requerir el sistema
+
 int ConfiguraSistema (TipoSistema *p_sistema) {
 	int result = 0;
-	// A completar por el alumno...
-	// ...
+
+	piLock (STD_IO_BUFFER_KEY);
+
+	wiringPiSetupGpio();
+	pinMode (23, OUTPUT); //declaro pin 23 como salida
+	//Hace falta algo más? Las entradas estan en el teclado del ordenador
+
+	piUnlock (STD_IO_BUFFER_KEY);
+
+	softToneCreate(23);
+
+	//p_sistema->player.myTmr = tmr_new(timer_player_duracion_nota_actual_isr);
 
 	return result;
 }
@@ -41,11 +53,15 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 // la inicializacion de los diferentes elementos de los que consta nuestro sistema,
 // la torreta, los efectos, etc.
 // igualmente arrancará el thread de exploración del teclado del PC
+
 int InicializaSistema (TipoSistema *p_sistema) {
 	int result = 0;
 
-	// A completar por el alumno...
-	// ...
+	//Incializamos el efecto disparo
+	InicializaEfecto(&(p_sistema->player.efecto_disparo),"disparo",frecuenciasDisparo,tiemposDisparo,16);
+	//InicializaEfecto(&p_sistema->player.efecto_impacto,"impacto",frecuenciasImpacto,tiemposImpacto,32);
+	p_sistema->player.p_efecto = &(p_sistema->player.efecto_disparo);
+	InicializaPlayer(&p_sistema->player);
 
 	// Lanzamos thread para exploracion del teclado convencional del PC
 	result = piThreadCreate (thread_explora_teclado_PC);
@@ -54,6 +70,9 @@ int InicializaSistema (TipoSistema *p_sistema) {
 		printf ("Thread didn't start!!!\n");
 		return -1;
 	}
+
+	// Creamos un tmr
+	p_sistema->player.myTmr = tmr_new(timer_player_duracion_nota_actual_isr);
 
 	return result;
 }
@@ -74,11 +93,32 @@ PI_THREAD (thread_explora_teclado_PC) {
 			teclaPulsada = kbread();
 
 			switch(teclaPulsada) {
-				// A completar por el alumno...
-				// ...
-				case 's':
-					// A completar por el alumno...
-					// ...
+				case 'j' :
+					piLock (PLAYER_FLAGS_KEY);
+						flags_player |= FLAG_NOTA_TIMEOUT;
+					piUnlock (PLAYER_FLAGS_KEY);
+
+					printf("Tecla J pulsada!\n");
+					fflush(stdout);
+					break;
+
+				case 't':
+
+					piLock (PLAYER_FLAGS_KEY);
+					flags_player |= FLAG_PLAYER_STOP;
+					piUnlock (PLAYER_FLAGS_KEY);
+
+					printf("Tecla T pulsada!\n");
+					fflush(stdout);
+					break;
+
+				case 's':  //tecla de disparo
+
+					piLock (PLAYER_FLAGS_KEY);
+					flags_player |= FLAG_START_DISPARO;
+
+					piUnlock (PLAYER_FLAGS_KEY);
+
 					printf("Tecla S pulsada!\n");
 					fflush(stdout);
 					break;
@@ -127,12 +167,14 @@ int main ()
 	};
 
 	fsm_t* player_fsm = fsm_new (WAIT_START, reproductor, &(sistema.player));
+
 	// A completar por el alumno...
 	// ...
 
 	next = millis();
 	while (1) {
 		fsm_fire (player_fsm);
+
 		// A completar por el alumno...
 		// ...
 
