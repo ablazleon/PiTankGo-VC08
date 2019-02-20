@@ -36,6 +36,8 @@ typedef struct {
 
 	// A completar por el alumno (declaracion del temporizador para control duracion notas)
 	// ...
+	
+	tmr* myTmr; // Mi tmr
 } TipoPlayer;
 
 extern int flags_player;
