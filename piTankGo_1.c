@@ -43,7 +43,13 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 
 	softToneCreate(23);
 
-	//p_sistema->player.myTmr = tmr_new(timer_player_duracion_nota_actual_isr);
+	// Crear timer
+	
+	//tmr_t* tmr_new (notify_func_t isr);
+	// tmr_t* tmr_new (timer_player_duracion_nota_actual_isr);
+	// p_sistema -> p_player.tmr = tmr_new;
+		
+	p_sistema->player.myTmr = tmr_new(timer_player_duracion_nota_actual_isr);
 
 	return result;
 }
