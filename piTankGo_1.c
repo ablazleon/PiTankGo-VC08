@@ -77,8 +77,7 @@ int InicializaSistema (TipoSistema *p_sistema) {
 		return -1;
 	}
 
-	// Creamos un tmr
-	p_sistema->player.myTmr = tmr_new(timer_player_duracion_nota_actual_isr);
+
 
 	return result;
 }
