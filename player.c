@@ -194,6 +194,9 @@ void ComienzaNuevaNota (fsm_t* this) {
 	piLock(STD_IO_BUFFER_KEY);
 	printf("[PLAYER][ComienzaNuevaNota][Nota %d][Frecuencia %d][Duracion %d][Numero de Notas %d] \n",p_player->posicion_nota_actual+1,p_player->frecuencia_nota_actual,p_player->duracion_nota_actual, p_player->p_efecto->num_notas);
 
+	//Comenzamos un nuevo timer para la nueva nota.
+	tmr_startms(p_player->myTmr, p_player->duracion_nota_actual);
+
 	// Generamos una nota
 	softToneWrite(23, p_player->frecuencia_nota_actual);
 
@@ -202,6 +205,9 @@ void ComienzaNuevaNota (fsm_t* this) {
 
 
 }
+/*
+ * Actualizar el valor de la nota actual.
+ */
 
 void ActualizaPlayer (fsm_t* this) {
 
@@ -214,9 +220,6 @@ void ActualizaPlayer (fsm_t* this) {
 	p_player->posicion_nota_actual++;
 
 	if(p_player->posicion_nota_actual < p_player->p_efecto->num_notas){
-
-		//Comenzamos un nuevo timer para la nueva nota.
-		tmr_startms(p_player->myTmr, p_player->duracion_nota_actual);
 
 		p_player->frecuencia_nota_actual=p_player->p_efecto->frecuencias[p_player->posicion_nota_actual];
 		p_player->duracion_nota_actual= p_player->p_efecto->duraciones[p_player->posicion_nota_actual];
@@ -249,12 +252,14 @@ void FinalEfecto (fsm_t* this) {
 void timer_player_duracion_nota_actual_isr (union sigval value) {
 
 	piLock (PLAYER_FLAGS_KEY);
-	printf("Final Timer");
+
+	printf("Final Timer \n");
 	fflush(stdout);
 	flags_player |= FLAG_NOTA_TIMEOUT;
 	printf("%d", flags_player);
 	fflush(stdout);
-	piLock (PLAYER_FLAGS_KEY);
+
+	piUnlock (PLAYER_FLAGS_KEY);
 
 }
 
