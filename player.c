@@ -127,13 +127,16 @@ void InicializaPlayDisparo (fsm_t* this) {
 
 	p_player = (TipoPlayer*)(this->user_data);
 
+	p_player->p_efecto = &(p_player->efecto_disparo);
+
+	InicializaPlayer(p_player);
+
 	printf("[PLAYER][ComienzaNuevaNota][Nota %d][Frecuencia %d][Duracion %d][Numero de Notas %d] \n",p_player->posicion_nota_actual+1,p_player->frecuencia_nota_actual,p_player->duracion_nota_actual, p_player->p_efecto->num_notas);
 
 	// Se generan los sonidos
 	softToneWrite(23, p_player->frecuencia_nota_actual);
 
 	piLock (PLAYER_FLAGS_KEY);
-
 	flags_player &= ~FLAG_START_DISPARO;
 	piUnlock (PLAYER_FLAGS_KEY);
 
@@ -141,7 +144,6 @@ void InicializaPlayDisparo (fsm_t* this) {
 
 	piLock (STD_IO_BUFFER_KEY);
 	printf("Inicializa Disparo\n");
-
 	piUnlock (STD_IO_BUFFER_KEY);
 }
 
@@ -154,24 +156,20 @@ void InicializaPlayImpacto (fsm_t* this) {
 
 	p_player = (TipoPlayer*)(this->user_data);
 
-	//Incializamos el efecto impacto
+	p_player->p_efecto = &(p_player->efecto_impacto);
 
-	TipoEfecto efecto_impacto;
-
-	int resIncializaEfecto = InicializaEfecto(&efecto_impacto,"impacto",frecuenciasImpacto,tiemposImpacto,32 );
-	if(resIncializaEfecto < 0){
-		printf("Error\n");
-	}
 	InicializaPlayer(p_player);
 
+	printf("[PLAYER][ComienzaNuevaNota][Nota %d][Frecuencia %d][Duracion %d][Numero de Notas %d] \n",p_player->posicion_nota_actual+1,p_player->frecuencia_nota_actual,p_player->duracion_nota_actual, p_player->p_efecto->num_notas);
 
+	// Se generan los sonidos
+	softToneWrite(23, p_player->frecuencia_nota_actual);
 
 	piLock (PLAYER_FLAGS_KEY);
-
 	flags_player &= ~FLAG_START_IMPACTO;
-
-
 	piUnlock (PLAYER_FLAGS_KEY);
+
+	tmr_startms(p_player->myTmr, p_player->duracion_nota_actual);
 
 	piLock (STD_IO_BUFFER_KEY);
 	printf("Inicializa Impactos\n");
@@ -230,9 +228,12 @@ void ActualizaPlayer (fsm_t* this) {
 	} else{
 		piLock(PLAYER_FLAGS_KEY);
 		flags_player |= FLAG_PLAYER_END;
+		printf("Aqui %d", flags_player);
+		fflush(stdout);
 		piUnlock(PLAYER_FLAGS_KEY);
 
 		piLock(STD_IO_BUFFER_KEY);
+
 		printf("[FinalMelodia]");
 		fflush(stdout);
 		piUnlock(STD_IO_BUFFER_KEY);

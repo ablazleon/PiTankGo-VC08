@@ -63,11 +63,17 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 int InicializaSistema (TipoSistema *p_sistema) {
 	int result = 0;
 
+	char *miEfectoDisparo = "disparo";
+	char *miEfectoImpacto = "impacto";
+
+
 	//Incializamos el efecto disparo
-	InicializaEfecto(&(p_sistema->player.efecto_disparo),"disparo",frecuenciasDisparo,tiemposDisparo,16);
-	//InicializaEfecto(&p_sistema->player.efecto_impacto,"impacto",frecuenciasImpacto,tiemposImpacto,32);
-	p_sistema->player.p_efecto = &(p_sistema->player.efecto_disparo);
-	InicializaPlayer(&p_sistema->player);
+	InicializaEfecto(&(p_sistema->player.efecto_disparo),miEfectoDisparo,frecuenciasDisparo,tiemposDisparo,16);
+	InicializaEfecto(&(p_sistema->player.efecto_impacto),miEfectoImpacto,frecuenciasImpacto,tiemposImpacto,32);
+
+	//p_sistema->player.p_efecto = &(p_sistema->player.efecto_disparo);
+
+	//InicializaPlayer(&(p_sistema->player));
 
 	// Lanzamos thread para exploracion del teclado convencional del PC
 	result = piThreadCreate (thread_explora_teclado_PC);
@@ -100,7 +106,7 @@ PI_THREAD (thread_explora_teclado_PC) {
 			switch(teclaPulsada) {
 				case 'j' :
 					piLock (PLAYER_FLAGS_KEY);
-						flags_player |= FLAG_NOTA_TIMEOUT;
+					flags_player |= FLAG_NOTA_TIMEOUT;
 					piUnlock (PLAYER_FLAGS_KEY);
 
 					printf("Tecla J pulsada!\n");
@@ -127,6 +133,18 @@ PI_THREAD (thread_explora_teclado_PC) {
 					printf("Tecla S pulsada!\n");
 					fflush(stdout);
 					break;
+
+				case 'm':  //tecla de disparo
+
+					piLock (PLAYER_FLAGS_KEY);
+					flags_player |= FLAG_START_IMPACTO;
+
+					piUnlock (PLAYER_FLAGS_KEY);
+
+					printf("Tecla M pulsada!\n");
+					fflush(stdout);
+					break;
+
 
 				case 'q':
 					exit(0);
