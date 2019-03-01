@@ -17,8 +17,12 @@ void InicializaTorreta (TipoTorreta *p_torreta) {
 int CompruebaComienzo (fsm_t* this) {
 	int result = 0;
 
-	printf("CompruebaComienzo\n");
-	fflush(stdout);
+//	printf("CompruebaComienzo\n");
+//	fflush(stdout);
+
+	piLock (PLAYER_FLAGS_KEY);
+	result = (flags_juego & FLAG_SYSTEM_START);
+	piUnlock (PLAYER_FLAGS_KEY);
 
 	// A completar por el alumno
 	// ...
@@ -29,11 +33,12 @@ int CompruebaComienzo (fsm_t* this) {
 int CompruebaJoystickUp (fsm_t* this) {
 	int result = 0;
 
-	printf("CompruebaJoystickUp\n");
-	fflush(stdout);
+//	printf("CompruebaJoystickUp\n");
+//	fflush(stdout);
 
-	// A completar por el alumno
-	// ...
+	piLock (PLAYER_FLAGS_KEY);
+	result = (flags_juego & FLAG_JOYSTICK_UP);
+	piUnlock (PLAYER_FLAGS_KEY);
 
 	return result;
 }
@@ -41,8 +46,12 @@ int CompruebaJoystickUp (fsm_t* this) {
 int CompruebaJoystickDown (fsm_t* fsm_player){
 	int result = 0;
 
-	printf("CompruebaJoystickDown\n");
-	fflush(stdout);
+//	printf("CompruebaJoystickDown\n");
+//	fflush(stdout);
+
+	piLock (PLAYER_FLAGS_KEY);
+	result = (flags_juego & FLAG_JOYSTICK_DOWN);
+	piUnlock (PLAYER_FLAGS_KEY);
 
 	// A completar por el alumno
 	// ...
@@ -53,8 +62,12 @@ int CompruebaJoystickDown (fsm_t* fsm_player){
 int CompruebaJoystickLeft (fsm_t* this) {
 	int result = 0;
 
-	printf("CompruebaJoystickLeft\n");
-	fflush(stdout);
+//	printf("CompruebaJoystickLeft\n");
+//	fflush(stdout);
+
+	piLock (PLAYER_FLAGS_KEY);
+	result = (flags_juego & FLAG_JOYSTICK_LEFT);
+	piUnlock (PLAYER_FLAGS_KEY);
 
 	// A completar por el alumno
 	// ...
@@ -65,8 +78,12 @@ int CompruebaJoystickLeft (fsm_t* this) {
 int CompruebaJoystickRight (fsm_t* this) {
 	int result = 0;
 
-	printf("CompruebaJoystickRight\n");
-	fflush(stdout);
+//	printf("CompruebaJoystickRight\n");
+//	fflush(stdout);
+
+	piLock (PLAYER_FLAGS_KEY);
+	result = (flags_juego & FLAG_JOYSTICK_RIGHT);
+	piUnlock (PLAYER_FLAGS_KEY);
 
 	// A completar por el alumno
 	// ...
@@ -77,8 +94,12 @@ int CompruebaJoystickRight (fsm_t* this) {
 int CompruebaTimeoutDisparo (fsm_t* this) {
 	int result = 0;
 
-	printf("CompruebaTimeoutDisparo\n");
-	fflush(stdout);
+//	printf("CompruebaTimeoutDisparo\n");
+//	fflush(stdout);
+
+	piLock (PLAYER_FLAGS_KEY);
+	result = (flags_juego & FLAG_SHOOT_TIMEOUT);
+	piUnlock (PLAYER_FLAGS_KEY);
 
 	// A completar por el alumno
 	// ...
@@ -89,8 +110,12 @@ int CompruebaTimeoutDisparo (fsm_t* this) {
 int CompruebaImpacto (fsm_t* this) {
 	int result = 0;
 
-	printf("CompruebaImpacto\n");
-	fflush(stdout);
+//	printf("CompruebaImpacto\n");
+//	fflush(stdout);
+
+	piLock (PLAYER_FLAGS_KEY);
+	result = (flags_juego & FLAG_TARGET_DONE);
+	piUnlock (PLAYER_FLAGS_KEY);
 
 	// A completar por el alumno
 	// ...
@@ -101,8 +126,12 @@ int CompruebaImpacto (fsm_t* this) {
 int CompruebaTriggerButton (fsm_t* this) {
 	int result = 0;
 
-	printf("CompruebaTriggerButton\n");
-	fflush(stdout);
+//	printf("CompruebaTriggerButton\n");
+//	fflush(stdout);
+
+	piLock (PLAYER_FLAGS_KEY);
+	result = (flags_juego & FLAG_TRIGGER_BUTTON);
+	piUnlock (PLAYER_FLAGS_KEY);
 
 	// A completar por el alumno
 	// ...
@@ -113,8 +142,12 @@ int CompruebaTriggerButton (fsm_t* this) {
 int CompruebaFinalJuego (fsm_t* this) {
 	int result = 0;
 
-	printf("CompruebaFinalJuego\n");
-	fflush(stdout);
+//	printf("CompruebaFinalJuego\n");
+//	fflush(stdout);
+
+	piLock (PLAYER_FLAGS_KEY);
+	result = (flags_juego & FLAG_SYSTEM_END);
+	piUnlock (PLAYER_FLAGS_KEY);
 
 	// A completar por el alumno
 	// ...
@@ -125,8 +158,12 @@ int CompruebaFinalJuego (fsm_t* this) {
 int Devuelve1 (fsm_t* this) {
 	int result = 1;
 
-	printf("Devuelve1\n");
-	fflush(stdout);
+//	printf("Devuelve1\n");
+//	fflush(stdout);
+
+	piLock (PLAYER_FLAGS_KEY);
+	flags_juego = FLAG_SYSTEM_START;
+	piUnlock (PLAYER_FLAGS_KEY);
 
 	// A completar por el alumno
 	// ...

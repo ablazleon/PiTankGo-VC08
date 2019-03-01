@@ -370,6 +370,11 @@ static void process_key (fsm_t* this) {
 			printf("\nKeypress \"%c\"...\n",
 					tecladoTL04[p_teclado->teclaPulsada.row][p_teclado->teclaPulsada.col]);
 			fflush(stdout);
+
+			piLock (PLAYER_FLAGS_KEY);
+			flags_juego |= FLAG_SYSTEM_START;
+			piUnlock (PLAYER_FLAGS_KEY);
+
 			// Si la tecla es la 8 entonces sonará el disparo.
 			if ((p_teclado->teclaPulsada.row == 2) & (p_teclado->teclaPulsada.col == 1)) {
 				printf("\n8 pulsado \"%c\"...\n",
@@ -377,7 +382,7 @@ static void process_key (fsm_t* this) {
 				fflush(stdout);
 
 				piLock (PLAYER_FLAGS_KEY);
-				flags_player |= FLAG_START_DISPARO;
+				flags_juego |= FLAG_START_DISPARO;
 				piUnlock (PLAYER_FLAGS_KEY);
 
 			}
@@ -386,24 +391,41 @@ static void process_key (fsm_t* this) {
 			if ((p_teclado->teclaPulsada.row == 2) & (p_teclado->teclaPulsada.col == 0)) {
 				printf("Izquierda");
 				fflush(stdout);
+
+				piLock (PLAYER_FLAGS_KEY);
+				flags_juego |= FLAG_JOYSTICK_LEFT;
+				piUnlock (PLAYER_FLAGS_KEY);
+
 			}
 
 			// Si la tecla es la 5 entonces se moverá hacia arriba.
 			if ((p_teclado->teclaPulsada.row == 1) & (p_teclado->teclaPulsada.col == 1)) {
 				printf("arriba");
 				fflush(stdout);
+
+				piLock (PLAYER_FLAGS_KEY);
+				flags_juego |= FLAG_JOYSTICK_UP;
+				piUnlock (PLAYER_FLAGS_KEY);
 			}
 
 			// Si la tecla es la 9 entonces se moverá hacia la derecha.
 			if ((p_teclado->teclaPulsada.row == 2) & (p_teclado->teclaPulsada.col == 2)) {
 				printf("derecha");
 				fflush(stdout);
+
+				piLock (PLAYER_FLAGS_KEY);
+				flags_juego |= FLAG_JOYSTICK_RIGHT;
+				piUnlock (PLAYER_FLAGS_KEY);
 			}
 
 			// Si la tecla es la 0 entonces se moverá hacia abajo.
 			if ((p_teclado->teclaPulsada.row == 3) & (p_teclado->teclaPulsada.col == 1)) {
 				printf("abajo");
 				fflush(stdout);
+
+				piLock (PLAYER_FLAGS_KEY);
+				flags_juego |= FLAG_JOYSTICK_DOWN;
+				piUnlock (PLAYER_FLAGS_KEY);
 			}
 
 
@@ -527,7 +549,7 @@ int main ()
 			{ WAIT_START, CompruebaComienzo, WAIT_MOVE, ComienzaSistema },
 			{ WAIT_MOVE, CompruebaJoystickUp, JOYSTICK_UP, MueveTorretaArriba },
 			{ JOYSTICK_UP, Devuelve1, WAIT_MOVE, NULL },
-			{ WAIT_MOVE, CompruebaJoystickDown, JOYSTICK_DOWN, MueveTorretaArriba },
+			{ WAIT_MOVE, CompruebaJoystickDown, JOYSTICK_DOWN, MueveTorretaAbajo },
 			{ JOYSTICK_DOWN, Devuelve1, WAIT_MOVE, NULL },
 			{ WAIT_MOVE, CompruebaJoystickRight, JOYSTICK_RIGHT, MueveTorretaDerecha },
 			{ JOYSTICK_RIGHT, Devuelve1, WAIT_MOVE, NULL },
