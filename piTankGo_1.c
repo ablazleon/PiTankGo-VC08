@@ -381,6 +381,32 @@ static void process_key (fsm_t* this) {
 				piUnlock (PLAYER_FLAGS_KEY);
 
 			}
+
+			// Si la tecla es la 7 entonces se moverá hacia la izquierda.
+			if ((p_teclado->teclaPulsada.row == 2) & (p_teclado->teclaPulsada.col == 0)) {
+				printf("Izquierda");
+				fflush(stdout);
+			}
+
+			// Si la tecla es la 5 entonces se moverá hacia arriba.
+			if ((p_teclado->teclaPulsada.row == 1) & (p_teclado->teclaPulsada.col == 1)) {
+				printf("arriba");
+				fflush(stdout);
+			}
+
+			// Si la tecla es la 9 entonces se moverá hacia la derecha.
+			if ((p_teclado->teclaPulsada.row == 2) & (p_teclado->teclaPulsada.col == 2)) {
+				printf("derecha");
+				fflush(stdout);
+			}
+
+			// Si la tecla es la 0 entonces se moverá hacia abajo.
+			if ((p_teclado->teclaPulsada.row == 3) & (p_teclado->teclaPulsada.col == 1)) {
+				printf("abajo");
+				fflush(stdout);
+			}
+
+
 			break;
 
 		default:
@@ -496,12 +522,35 @@ int main ()
 		{-1, NULL, -1, NULL },
 	};
 
+
+	fsm_trans_t juego[] = {
+			{ WAIT_START, CompruebaComienzo, WAIT_MOVE, ComienzaSistema },
+			{ WAIT_MOVE, CompruebaJoystickUp, JOYSTICK_UP, MueveTorretaArriba },
+			{ JOYSTICK_UP, Devuelve1, WAIT_MOVE, NULL },
+			{ WAIT_MOVE, CompruebaJoystickDown, JOYSTICK_DOWN, MueveTorretaArriba },
+			{ JOYSTICK_DOWN, Devuelve1, WAIT_MOVE, NULL },
+			{ WAIT_MOVE, CompruebaJoystickRight, JOYSTICK_RIGHT, MueveTorretaDerecha },
+			{ JOYSTICK_RIGHT, Devuelve1, WAIT_MOVE, NULL },
+			{ WAIT_MOVE, CompruebaJoystickLeft, JOYSTICK_LEFT, MueveTorretaIzquierda },
+			{ JOYSTICK_LEFT, Devuelve1, WAIT_MOVE, NULL },
+			{ WAIT_MOVE, CompruebaTriggerButton, TRIGGER_BUTTON, DisparoIR },
+			{ TRIGGER_BUTTON, CompruebaImpacto, WAIT_MOVE, ImpactoDetectado },
+			{ TRIGGER_BUTTON, CompruebaTimeoutDisparo, WAIT_MOVE, FinalDisparoIR },
+			{ WAIT_MOVE, CompruebaFinalJuego, WAIT_END, FinalizaJuego },
+			{-1, NULL, -1, NULL },
+		};
+
+
+
 	initialize(&teclado);
 
 	fsm_t* player_fsm = fsm_new (WAIT_START, reproductor, &(sistema.player));
 
 	fsm_t* columns_fsm = fsm_new (KEY_COL_1, columns, &teclado);
 	fsm_t* keypad_fsm = fsm_new (KEY_WAITING, keypad, &teclado);
+
+	// Crear la máquina de estados
+	fsm_t* juego_fsm = fsm_new (WAIT_START, juego, NULL);
 
 	// A completar por el alumno...
 	// ...
@@ -512,6 +561,7 @@ int main ()
 
 		fsm_fire (columns_fsm);
 		fsm_fire (keypad_fsm);
+		fsm_fire (juego_fsm);
 
 		// A completar por el alumno...
 		// ...

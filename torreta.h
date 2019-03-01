@@ -50,6 +50,7 @@ int CompruebaTimeoutDisparo (fsm_t* this);
 int CompruebaImpacto (fsm_t* this);
 int CompruebaTriggerButton (fsm_t* this);
 int CompruebaFinalJuego (fsm_t* this);
+int Devuelve1(fsm_t* this);
 
 // Prototipos de funciones de salida
 void ComienzaSistema (fsm_t* this);

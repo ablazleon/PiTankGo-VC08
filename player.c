@@ -200,8 +200,6 @@ void ComienzaNuevaNota (fsm_t* this) {
 
 	piUnlock(STD_IO_BUFFER_KEY);
 
-
-
 }
 /*
  * Actualizar el valor de la nota actual.

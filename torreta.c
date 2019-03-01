@@ -17,6 +17,9 @@ void InicializaTorreta (TipoTorreta *p_torreta) {
 int CompruebaComienzo (fsm_t* this) {
 	int result = 0;
 
+	printf("CompruebaComienzo\n");
+	fflush(stdout);
+
 	// A completar por el alumno
 	// ...
 
@@ -25,6 +28,9 @@ int CompruebaComienzo (fsm_t* this) {
 
 int CompruebaJoystickUp (fsm_t* this) {
 	int result = 0;
+
+	printf("CompruebaJoystickUp\n");
+	fflush(stdout);
 
 	// A completar por el alumno
 	// ...
@@ -35,6 +41,9 @@ int CompruebaJoystickUp (fsm_t* this) {
 int CompruebaJoystickDown (fsm_t* fsm_player){
 	int result = 0;
 
+	printf("CompruebaJoystickDown\n");
+	fflush(stdout);
+
 	// A completar por el alumno
 	// ...
 
@@ -43,6 +52,9 @@ int CompruebaJoystickDown (fsm_t* fsm_player){
 
 int CompruebaJoystickLeft (fsm_t* this) {
 	int result = 0;
+
+	printf("CompruebaJoystickLeft\n");
+	fflush(stdout);
 
 	// A completar por el alumno
 	// ...
@@ -53,6 +65,9 @@ int CompruebaJoystickLeft (fsm_t* this) {
 int CompruebaJoystickRight (fsm_t* this) {
 	int result = 0;
 
+	printf("CompruebaJoystickRight\n");
+	fflush(stdout);
+
 	// A completar por el alumno
 	// ...
 
@@ -61,6 +76,9 @@ int CompruebaJoystickRight (fsm_t* this) {
 
 int CompruebaTimeoutDisparo (fsm_t* this) {
 	int result = 0;
+
+	printf("CompruebaTimeoutDisparo\n");
+	fflush(stdout);
 
 	// A completar por el alumno
 	// ...
@@ -71,6 +89,9 @@ int CompruebaTimeoutDisparo (fsm_t* this) {
 int CompruebaImpacto (fsm_t* this) {
 	int result = 0;
 
+	printf("CompruebaImpacto\n");
+	fflush(stdout);
+
 	// A completar por el alumno
 	// ...
 
@@ -79,6 +100,9 @@ int CompruebaImpacto (fsm_t* this) {
 
 int CompruebaTriggerButton (fsm_t* this) {
 	int result = 0;
+
+	printf("CompruebaTriggerButton\n");
+	fflush(stdout);
 
 	// A completar por el alumno
 	// ...
@@ -89,57 +113,113 @@ int CompruebaTriggerButton (fsm_t* this) {
 int CompruebaFinalJuego (fsm_t* this) {
 	int result = 0;
 
+	printf("CompruebaFinalJuego\n");
+	fflush(stdout);
+
 	// A completar por el alumno
 	// ...
 
 	return result;
 }
 
+int Devuelve1 (fsm_t* this) {
+	int result = 1;
+
+	printf("Devuelve1\n");
+	fflush(stdout);
+
+	// A completar por el alumno
+	// ...
+
+	return result;
+}
+
+
 //------------------------------------------------------
 // FUNCIONES DE SALIDA O DE ACCION DE LA MAQUINA DE ESTADOS
 //------------------------------------------------------
 
+
+
+
 void ComienzaSistema (fsm_t* this) {
+
+	printf("ComienzaSistema\n");
+	fflush(stdout);
+
+
 	// A completar por el alumno
 	// ...
 }
 
 void MueveTorretaArriba (fsm_t* this) {
+
+	printf("MueveTorretaArriba\n");
+	fflush(stdout);
+
 	// A completar por el alumno
 	// ...
 }
 
 void MueveTorretaAbajo (fsm_t* this) {
+
+	printf("MueveTorretaAbajo\n");
+	fflush(stdout);
+
 	// A completar por el alumno
 	// ...
 }
 
 void MueveTorretaIzquierda (fsm_t* this) {
+
+	printf("MueveTorretaIzquierda\n");
+	fflush(stdout);
+
 	// A completar por el alumno
 	// ...
 }
 
 void MueveTorretaDerecha (fsm_t* this) {
+
+	printf("MueveTorretaDerecha\n");
+	fflush(stdout);
+
 	// A completar por el alumno
 	// ...
 }
 
 void DisparoIR (fsm_t* this) {
+
+	printf("DisparoIR\n");
+	fflush(stdout);
+
 	// A completar por el alumno
 	// ...
 }
 
 void FinalDisparoIR (fsm_t* this) {
+
+	printf("FinalDisparoIR\n");
+	fflush(stdout);
+
 	// A completar por el alumno
 	// ...
 }
 
 void ImpactoDetectado (fsm_t* this) {
+
+	printf("ImpactoDetectado\n");
+	fflush(stdout);
+
 	// A completar por el alumno
 	// ...
 }
 
 void FinalizaJuego (fsm_t* this) {
+
+	printf("FinalizaJuego\n");
+	fflush(stdout);
+
 	// A completar por el alumno
 	// ...
 }
