@@ -370,6 +370,17 @@ static void process_key (fsm_t* this) {
 			printf("\nKeypress \"%c\"...\n",
 					tecladoTL04[p_teclado->teclaPulsada.row][p_teclado->teclaPulsada.col]);
 			fflush(stdout);
+			// Si la tecla es la 8 entonces sonará el disparo.
+			if ((p_teclado->teclaPulsada.row == 2) & (p_teclado->teclaPulsada.col == 1)) {
+				printf("\n8 pulsado \"%c\"...\n",
+					tecladoTL04[p_teclado->teclaPulsada.row][p_teclado->teclaPulsada.col]);
+				fflush(stdout);
+
+				piLock (PLAYER_FLAGS_KEY);
+				flags_player |= FLAG_START_DISPARO;
+				piUnlock (PLAYER_FLAGS_KEY);
+
+			}
 			break;
 
 		default:
@@ -401,10 +412,7 @@ static void timer_duracion_columna_isr (union sigval value) {
 }
 
 int initialize(TipoTeclado *p_teclado) {
-	if (wiringPiSetupGpio() < 0) {
-	    fprintf (stderr, "Unable to setup wiringPi: %s\n", strerror (errno)) ;
-	    return 1 ;
-	}
+
 
 	// Comenzamos excitacion por primera columna
 	p_teclado->columna_actual = COL_1;

@@ -22,19 +22,19 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: PiTankGo1
+all: Pitankgo
 
 # Tool invocations
-PiTankGo1: $(OBJS) $(USER_OBJS)
+Pitankgo: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross GCC Linker'
-	arm-linux-gnueabihf-gcc -L"C:\SysGCC\Raspberry\lib" -o "PiTankGo1" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-linux-gnueabihf-gcc -L"C:\SysGCC\Raspberry\lib" -o "Pitankgo" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) PiTankGo1
+	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) Pitankgo
 	-@echo ' '
 
 .PHONY: all clean dependents
