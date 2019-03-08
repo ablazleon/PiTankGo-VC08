@@ -102,6 +102,7 @@ int InicializaSistema (TipoSistema *p_sistema) {
 	return result;
 }
 
+
 //------------------------------------------------------
 // SUBRUTINAS DE ATENCION A LAS INTERRUPCIONES
 //------------------------------------------------------
@@ -382,7 +383,7 @@ static void process_key (fsm_t* this) {
 				fflush(stdout);
 
 				piLock (PLAYER_FLAGS_KEY);
-				flags_juego |= FLAG_START_DISPARO;
+				flags_player |= FLAG_START_DISPARO;
 				piUnlock (PLAYER_FLAGS_KEY);
 
 			}
