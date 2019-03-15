@@ -80,6 +80,12 @@ int InicializaSistema (TipoSistema *p_sistema) {
 	char *miEfectoDisparo = "disparo";
 	char *miEfectoImpacto = "impacto";
 
+	TipoTorreta miTorreta;
+
+	InicializaTorreta(&miTorreta);
+
+	p_sistema->torreta = miTorreta;
+
 
 	//Incializamos el efecto disparo
 	InicializaEfecto(&(p_sistema->player.efecto_disparo),miEfectoDisparo,frecuenciasDisparo,tiemposDisparo,16);
@@ -103,37 +109,28 @@ int InicializaSistema (TipoSistema *p_sistema) {
 	return result;
 }
 
-int InicializaServoX (TipoSistema *p_sistema) {
-	int result = 0;
+// En inicializa Torreta
 
-	wiringPiSetupGpio();
-
-	// Creo un objeto tipo torreta y lo introduzco en mi p_sistema.
-	TipoTorreta miTorreta;
-	p_sistema->torreta = miTorreta;
-
-	//TipoServo miServoX;
-	//p_sistema->torreta.servo_x= miServoX;
-
-	p_sistema->torreta.servo_x.incremento = SERVO_INCREMENTO;
-	p_sistema->torreta.servo_x.minimo 	= SERVO_MINIMO;
-	p_sistema->torreta.servo_x.maximo = SERVO_MAXIMO;
-
-	p_sistema->torreta.servo_x.inicio = SERVO_MINIMO + (SERVO_MAXIMO - SERVO_MINIMO)/2;
-
-	p_sistema->torreta.posicion.x = p_sistema->torreta.servo_x.inicio;
-
-	if(p_sistema->torreta.posicion.x > p_sistema->torreta.servo_x.maximo)
-		p_sistema->torreta.posicion.x  = p_sistema->torreta.servo_x.maximo;
-
-	if(p_sistema->torreta.posicion.x < p_sistema->torreta.servo_x.minimo)
-		p_sistema->torreta.posicion.x  = p_sistema->torreta.servo_x.minimo;
-
-	softPwmCreate(SERVO_PINX, p_sistema->torreta.posicion.x, SERVO_PWM_RANGE); // Internamente ya hace: piHiPri (90) ;
-	softPwmWrite(SERVO_PINX, p_sistema->torreta.posicion.x);
-
-	return result;
-}
+//int InicializaServoX (TipoSistema *p_sistema) {
+//	int result = 0;
+//
+//	wiringPiSetupGpio();
+//
+//	// Creo un objeto tipo torreta y lo introduzco en mi p_sistema.
+//	TipoTorreta miTorreta;
+//	p_sistema->torreta = miTorreta;
+//
+//	InicializaTorreta(p_sistema->torreta);
+//	//TipoServo miServoX;
+//	//p_sistema->torreta.servo_x= miServoX;
+//
+//
+//
+//	softPwmCreate(SERVO_PINX, p_sistema->torreta.posicion.x, SERVO_PWM_RANGE); // Internamente ya hace: piHiPri (90) ;
+//	softPwmWrite(SERVO_PINX, p_sistema->torreta.posicion.x);
+//
+//	return result;
+//}
 
 
 //------------------------------------------------------

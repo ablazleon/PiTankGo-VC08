@@ -6,8 +6,24 @@
 //------------------------------------------------------
 
 void InicializaTorreta (TipoTorreta *p_torreta) {
-	// A completar por el alumno...
-	// ...
+
+
+	p_torreta.servo_x.incremento = SERVO_INCREMENTO;
+	p_torreta.servo_x.minimo 	= SERVO_MINIMO;
+	p_torreta.servo_x.maximo = SERVO_MAXIMO;
+
+	p_torreta.servo_x.inicio = SERVO_MINIMO + (SERVO_MAXIMO - SERVO_MINIMO)/2;
+
+	p_torreta.posicion.x = p_torreta.servo_x.inicio;
+
+		if(p_torreta.posicion.x > p_torreta.servo_x.maximo)
+			p_torreta.posicion.x  = p_torreta.servo_x.maximo;
+
+		if(p_torreta.posicion.x < p_torreta.servo_x.minimo)
+			p_torreta.posicion.x  = p_torreta.servo_x.minimo;
+
+	softPwmCreate(SERVO_PINX, p_torreta.posicion.x, SERVO_PWM_RANGE); // Internamente ya hace: piHiPri (90) ;
+	softPwmWrite(SERVO_PINX, p_torreta.posicion.x);
 }
 
 //------------------------------------------------------
