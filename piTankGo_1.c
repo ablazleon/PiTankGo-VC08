@@ -1,6 +1,7 @@
 
 #include "piTankGo_1.h"
 #include <softTone.h>
+#include <softPwm.h>
 
 int frecuenciaDespacito[160] = {0,1175,1109,988,740,740,740,740,740,740,988,988,988,988,880,988,784,0,784,784,784,784,784,988,988,988,988,1109,1175,880,0,880,880,880,880,880,1175,1175,1175,1175,1318,1318,1109,0,1175,1109,988,740,740,740,740,740,740,988,988,988,988,880,988,784,0,784,784,784,784,784,988,988,988,988,1109,1175,880,0,880,880,880,880,880,1175,1175,1175,1175,1318,1318,1109,0,1480,1318,1480,1318,1480,1318,1480,1318,1480,1318,1480,1568,1568,1175,0,1175,1568,1568,1568,0,1568,1760,1568,1480,0,1480,1480,1480,1760,1568,1480,1318,659,659,659,659,659,659,659,659,554,587,1480,1318,1480,1318,1480,1318,1480,1318,1480,1318,1480,1568,1568,1175,0,1175,1568,1568,1568,1568,1760,1568,1480,0,1480,1480,1480,1760,1568,1480,1318};
 int tiempoDespacito[160] = {1200,600,600,300,300,150,150,150,150,150,150,150,150,300,150,300,343,112,150,150,150,150,150,150,150,150,300,150,300,300,150,150,150,150,150,150,150,150,150,300,150,300,800,300,600,600,300,300,150,150,150,150,150,150,150,150,300,150,300,343,112,150,150,150,150,150,150,150,150,300,150,300,300,150,150,150,150,150,150,150,150,150,300,150,300,450,1800,150,150,150,150,300,150,300,150,150,150,300,150,300,450,450,300,150,150,225,75,150,150,300,450,800,150,150,300,150,150,300,450,150,150,150,150,150,150,150,150,300,300,150,150,150,150,150,150,450,150,150,150,300,150,300,450,450,300,150,150,150,300,150,300,450,800,150,150,300,150,150,300,450};
@@ -98,6 +99,38 @@ int InicializaSistema (TipoSistema *p_sistema) {
 
 
 
+
+	return result;
+}
+
+int InicializaServoX (TipoSistema *p_sistema) {
+	int result = 0;
+
+	wiringPiSetupGpio();
+
+	// Creo un objeto tipo torreta y lo introduzco en mi p_sistema.
+	TipoTorreta miTorreta;
+	p_sistema->torreta = miTorreta;
+
+	//TipoServo miServoX;
+	//p_sistema->torreta.servo_x= miServoX;
+
+	p_sistema->torreta.servo_x.incremento = SERVO_INCREMENTO;
+	p_sistema->torreta.servo_x.minimo 	= SERVO_MINIMO;
+	p_sistema->torreta.servo_x.maximo = SERVO_MAXIMO;
+
+	p_sistema->torreta.servo_x.inicio = SERVO_MINIMO + (SERVO_MAXIMO - SERVO_MINIMO)/2;
+
+	p_sistema->torreta.posicion.x = p_sistema->torreta.servo_x.inicio;
+
+	if(p_sistema->torreta.posicion.x > p_sistema->torreta.servo_x.maximo)
+		p_sistema->torreta.posicion.x  = p_sistema->torreta.servo_x.maximo;
+
+	if(p_sistema->torreta.posicion.x < p_sistema->torreta.servo_x.minimo)
+		p_sistema->torreta.posicion.x  = p_sistema->torreta.servo_x.minimo;
+
+	softPwmCreate(SERVO_PINX, p_sistema->torreta.posicion.x, SERVO_PWM_RANGE); // Internamente ya hace: piHiPri (90) ;
+	softPwmWrite(SERVO_PINX, p_sistema->torreta.posicion.x);
 
 	return result;
 }
@@ -574,6 +607,9 @@ int main ()
 
 	// Crear la máquina de estados
 	fsm_t* juego_fsm = fsm_new (WAIT_START, juego, NULL);
+
+	// Inicializa servo X
+
 
 	// A completar por el alumno...
 	// ...

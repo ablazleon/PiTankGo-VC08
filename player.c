@@ -69,6 +69,8 @@ int CompruebaStartDisparo (fsm_t* this) {
 	piUnlock (PLAYER_FLAGS_KEY);
 
 
+
+
 	return result;
 }
 
@@ -89,6 +91,7 @@ int CompruebaNuevaNota (fsm_t* this){
 	result = ~(flags_player & FLAG_PLAYER_END);
 	piUnlock (PLAYER_FLAGS_KEY);
 
+
 	return result;
 
 
@@ -101,7 +104,19 @@ int CompruebaNotaTimeout (fsm_t* this) {
 	result = (flags_player & FLAG_NOTA_TIMEOUT);
 	piUnlock (PLAYER_FLAGS_KEY);
 
+	/*
+	 *
+	 * Observamos el flag
+	 *
+	 *
+	if(result != 0){
+		printf("El resultado de result debe ser %d \n",result);
+		fflush(stdout);
+	}
+	*/
+
 	return result;
+
 }
 
 int CompruebaFinalEfecto (fsm_t* this) {

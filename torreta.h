@@ -15,7 +15,7 @@
 #include "piTankGoLib.h"
 
 //#define	SERVO_PIN			13
-#define	SERVO_PIN			18
+#define	SERVO_PINX			18
 
 // https://github.com/WiringPi/WiringPi/blob/master/wiringPi/softPwm.c
 //  The PWM Frequency is derived from the "pulse time" below. Essentially,
