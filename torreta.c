@@ -1,5 +1,7 @@
 
 #include "torreta.h"
+#include <softPwm.h>
+
 
 //------------------------------------------------------
 // PROCEDIMIENTOS DE INICIALIZACION DE LOS OBJETOS ESPECIFICOS
@@ -8,22 +10,40 @@
 void InicializaTorreta (TipoTorreta *p_torreta) {
 
 
-	p_torreta.servo_x.incremento = SERVO_INCREMENTO;
-	p_torreta.servo_x.minimo 	= SERVO_MINIMO;
-	p_torreta.servo_x.maximo = SERVO_MAXIMO;
+	p_torreta->servo_x.incremento = SERVO_INCREMENTO;
+	p_torreta->servo_x.minimo 	= SERVO_MINIMO;
+	p_torreta->servo_x.maximo = SERVO_MAXIMO;
 
-	p_torreta.servo_x.inicio = SERVO_MINIMO + (SERVO_MAXIMO - SERVO_MINIMO)/2;
+	p_torreta->servo_x.inicio = SERVO_MINIMO + (SERVO_MAXIMO - SERVO_MINIMO)/2;
 
-	p_torreta.posicion.x = p_torreta.servo_x.inicio;
+	p_torreta->posicion.x = p_torreta->servo_x.inicio;
 
-		if(p_torreta.posicion.x > p_torreta.servo_x.maximo)
-			p_torreta.posicion.x  = p_torreta.servo_x.maximo;
+		if(p_torreta->posicion.x > p_torreta->servo_x.maximo)
+			p_torreta->posicion.x  = p_torreta->servo_x.maximo;
 
-		if(p_torreta.posicion.x < p_torreta.servo_x.minimo)
-			p_torreta.posicion.x  = p_torreta.servo_x.minimo;
+		if(p_torreta->posicion.x < p_torreta->servo_x.minimo)
+			p_torreta->posicion.x  = p_torreta->servo_x.minimo;
 
-	softPwmCreate(SERVO_PINX, p_torreta.posicion.x, SERVO_PWM_RANGE); // Internamente ya hace: piHiPri (90) ;
-	softPwmWrite(SERVO_PINX, p_torreta.posicion.x);
+	softPwmCreate(SERVO_PINX, p_torreta->posicion.x, SERVO_PWM_RANGE); // Internamente ya hace: piHiPri (90) ;
+	softPwmWrite(SERVO_PINX, p_torreta->posicion.x);
+
+
+	p_torreta->servo_y.incremento = SERVO_INCREMENTO;
+	p_torreta->servo_y.minimo 	= SERVO_MINIMO;
+	p_torreta->servo_y.maximo = SERVO_MAXIMO;
+
+	p_torreta->servo_y.inicio = SERVO_MINIMO + (SERVO_MAXIMO - SERVO_MINIMO)/2;
+
+	p_torreta->posicion.y = p_torreta->servo_y.inicio;
+
+		if(p_torreta->posicion.y > p_torreta->servo_y.maximo)
+			p_torreta->posicion.y  = p_torreta->servo_y.maximo;
+
+		if(p_torreta->posicion.y < p_torreta->servo_y.minimo)
+			p_torreta->posicion.y  = p_torreta->servo_y.minimo;
+
+	softPwmCreate(SERVO_PINY, p_torreta->posicion.y, SERVO_PWM_RANGE); // Internamente ya hace: piHiPri (90) ;
+	softPwmWrite(SERVO_PINY, p_torreta->posicion.y);
 }
 
 //------------------------------------------------------
@@ -210,8 +230,19 @@ void MueveTorretaArriba (fsm_t* this) {
 	printf("MueveTorretaArriba\n");
 	fflush(stdout);
 
-	// A completar por el alumno
-	// ...
+	TipoTorreta *p_torreta;
+	p_torreta = (TipoTorreta*)(this->user_data);
+
+	flags_juego &= (~FLAG_JOYSTICK_UP);
+
+	if(p_torreta->posicion.y + p_torreta->servo_y.incremento <= p_torreta->servo_y.maximo) {
+		p_torreta->posicion.y = p_torreta->posicion.y + p_torreta->servo_y.incremento;
+
+		softPwmWrite(SERVO_PINY, p_torreta->posicion.y);
+
+		printf("[SERVO][POSICION]=[%d]\n", p_torreta->posicion.y);
+		fflush(stdout);
+	}
 }
 
 void MueveTorretaAbajo (fsm_t* this) {
@@ -219,8 +250,19 @@ void MueveTorretaAbajo (fsm_t* this) {
 	printf("MueveTorretaAbajo\n");
 	fflush(stdout);
 
-	// A completar por el alumno
-	// ...
+	TipoTorreta *p_torreta;
+	p_torreta = (TipoTorreta*)(this->user_data);
+
+	flags_juego &= (~FLAG_JOYSTICK_DOWN);
+
+	if(p_torreta->posicion.y - p_torreta->servo_y.incremento >= p_torreta->servo_y.minimo) {
+		p_torreta->posicion.y = p_torreta->posicion.y - p_torreta->servo_y.incremento;
+
+		softPwmWrite(SERVO_PINY, p_torreta->posicion.y);
+
+		printf("[SERVO][POSICION]=[%d]\n", p_torreta->posicion.y);
+		fflush(stdout);
+	}
 }
 
 void MueveTorretaIzquierda (fsm_t* this) {
@@ -228,8 +270,19 @@ void MueveTorretaIzquierda (fsm_t* this) {
 	printf("MueveTorretaIzquierda\n");
 	fflush(stdout);
 
-	// A completar por el alumno
-	// ...
+	TipoTorreta *p_torreta;
+	p_torreta = (TipoTorreta*)(this->user_data);
+
+	flags_juego &= (~FLAG_JOYSTICK_LEFT);
+
+	if(p_torreta->posicion.x - p_torreta->servo_x.incremento >= p_torreta->servo_x.minimo) {
+		p_torreta->posicion.x = p_torreta->posicion.x - p_torreta->servo_x.incremento;
+
+		softPwmWrite(SERVO_PINX, p_torreta->posicion.x);
+
+		printf("[SERVO][POSICION]=[%d]\n", p_torreta->posicion.x);
+		fflush(stdout);
+	}
 }
 
 void MueveTorretaDerecha (fsm_t* this) {
@@ -237,8 +290,19 @@ void MueveTorretaDerecha (fsm_t* this) {
 	printf("MueveTorretaDerecha\n");
 	fflush(stdout);
 
-	// A completar por el alumno
-	// ...
+	TipoTorreta *p_torreta;
+	p_torreta = (TipoTorreta*)(this->user_data);
+
+	flags_juego &= (~FLAG_JOYSTICK_RIGHT);
+
+	if(p_torreta->posicion.x + p_torreta->servo_x.incremento <= p_torreta->servo_x.maximo) {
+		p_torreta->posicion.x = p_torreta->posicion.x + p_torreta->servo_x.incremento;
+
+		softPwmWrite(SERVO_PINX, p_torreta->posicion.x);
+
+		printf("[SERVO][POSICION]=[%d]\n", p_torreta->posicion.x);
+		fflush(stdout);
+	}
 }
 
 void DisparoIR (fsm_t* this) {

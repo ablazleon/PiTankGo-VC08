@@ -603,7 +603,7 @@ int main ()
 	fsm_t* keypad_fsm = fsm_new (KEY_WAITING, keypad, &teclado);
 
 	// Crear la máquina de estados
-	fsm_t* juego_fsm = fsm_new (WAIT_START, juego, NULL);
+	fsm_t* juego_fsm = fsm_new (WAIT_START, juego, &sistema.torreta);
 
 	// Inicializa servo X
 
