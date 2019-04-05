@@ -60,6 +60,8 @@ PI_THREAD(thread_explora_teclado_PC);
 #include "fsm.h"
 #include "tmr.h"
 
+#define GPIO_RX 25
+
 #define GPIO_COL_1 0
 #define GPIO_COL_2 1
 #define GPIO_COL_3 2

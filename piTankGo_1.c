@@ -67,6 +67,12 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 	p_sistema->torreta.myTorretaTmr = tmr_new(timer_duracion_disparo_isr);
 	pinMode (GPIO_LIGHT, OUTPUT);
 
+	pinMode (GPIO_RX, INPUT);
+	pullUpDnControl(GPIO_RX, PUD_DOWN);
+	wiringPiISR (GPIO_RX, INT_EDGE_RISING, rx_irs);
+
+
+
 
 	return result;
 }
@@ -215,6 +221,14 @@ int CompruebaColumnTimeout (fsm_t* this) {
 	result = (flags & FLAG_TMR_TIMEOUT);
 	piUnlock (FLAG_KEY);
 	return result;
+}
+
+static void rx_irs (void) {
+
+	piLock (FLAG_KEY);
+	flags_juego |= FLAG_TARGET_DONE;
+	piUnlock (FLAG_KEY);
+
 }
 
 static void row_1_isr (void) {

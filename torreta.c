@@ -56,9 +56,9 @@ int CompruebaComienzo (fsm_t* this) {
 //	printf("CompruebaComienzo\n");
 //	fflush(stdout);
 
-	piLock (PLAYER_FLAGS_KEY);
+	piLock (SYSTEM_FLAGS_KEY);
 	result = (flags_juego & FLAG_SYSTEM_START);
-	piUnlock (PLAYER_FLAGS_KEY);
+	piUnlock (SYSTEM_FLAGS_KEY);
 
 	// A completar por el alumno
 	// ...
@@ -72,9 +72,9 @@ int CompruebaJoystickUp (fsm_t* this) {
 //	printf("CompruebaJoystickUp\n");
 //	fflush(stdout);
 
-	piLock (PLAYER_FLAGS_KEY);
+	piLock (SYSTEM_FLAGS_KEY);
 	result = (flags_juego & FLAG_JOYSTICK_UP);
-	piUnlock (PLAYER_FLAGS_KEY);
+	piUnlock (SYSTEM_FLAGS_KEY);
 
 	return result;
 }
@@ -85,9 +85,9 @@ int CompruebaJoystickDown (fsm_t* fsm_player){
 //	printf("CompruebaJoystickDown\n");
 //	fflush(stdout);
 
-	piLock (PLAYER_FLAGS_KEY);
+	piLock (SYSTEM_FLAGS_KEY);
 	result = (flags_juego & FLAG_JOYSTICK_DOWN);
-	piUnlock (PLAYER_FLAGS_KEY);
+	piUnlock (SYSTEM_FLAGS_KEY);
 
 	// A completar por el alumno
 	// ...
@@ -101,9 +101,9 @@ int CompruebaJoystickLeft (fsm_t* this) {
 //	printf("CompruebaJoystickLeft\n");
 //	fflush(stdout);
 
-	piLock (PLAYER_FLAGS_KEY);
+	piLock (SYSTEM_FLAGS_KEY);
 	result = (flags_juego & FLAG_JOYSTICK_LEFT);
-	piUnlock (PLAYER_FLAGS_KEY);
+	piUnlock (SYSTEM_FLAGS_KEY);
 
 	// A completar por el alumno
 	// ...
@@ -117,9 +117,9 @@ int CompruebaJoystickRight (fsm_t* this) {
 //	printf("CompruebaJoystickRight\n");
 //	fflush(stdout);
 
-	piLock (PLAYER_FLAGS_KEY);
+	piLock (SYSTEM_FLAGS_KEY);
 	result = (flags_juego & FLAG_JOYSTICK_RIGHT);
-	piUnlock (PLAYER_FLAGS_KEY);
+	piUnlock (SYSTEM_FLAGS_KEY);
 
 	// A completar por el alumno
 	// ...
@@ -149,9 +149,9 @@ int CompruebaImpacto (fsm_t* this) {
 //	printf("CompruebaImpacto\n");
 //	fflush(stdout);
 
-	piLock (PLAYER_FLAGS_KEY);
+	piLock (SYSTEM_FLAGS_KEY);
 	result = (flags_juego & FLAG_TARGET_DONE);
-	piUnlock (PLAYER_FLAGS_KEY);
+	piUnlock (SYSTEM_FLAGS_KEY);
 
 	// A completar por el alumno
 	// ...
@@ -165,9 +165,9 @@ int CompruebaTriggerButton (fsm_t* this) {
 //	printf("CompruebaTriggerButton\n");
 //	fflush(stdout);
 
-	piLock (PLAYER_FLAGS_KEY);
+	piLock (SYSTEM_FLAGS_KEY);
 	result = (flags_juego & FLAG_TRIGGER_BUTTON);
-	piUnlock (PLAYER_FLAGS_KEY);
+	piUnlock (SYSTEM_FLAGS_KEY);
 
 	// A completar por el alumno
 	// ...
@@ -181,9 +181,9 @@ int CompruebaFinalJuego (fsm_t* this) {
 //	printf("CompruebaFinalJuego\n");
 //	fflush(stdout);
 
-	piLock (PLAYER_FLAGS_KEY);
+	piLock (SYSTEM_FLAGS_KEY);
 	result = (flags_juego & FLAG_SYSTEM_END);
-	piUnlock (PLAYER_FLAGS_KEY);
+	piUnlock (SYSTEM_FLAGS_KEY);
 
 	// A completar por el alumno
 	// ...
@@ -197,9 +197,9 @@ int Devuelve1 (fsm_t* this) {
 //	printf("Devuelve1\n");
 //	fflush(stdout);
 
-	piLock (PLAYER_FLAGS_KEY);
+	piLock (SYSTEM_FLAGS_KEY);
 	flags_juego = FLAG_SYSTEM_START;
-	piUnlock (PLAYER_FLAGS_KEY);
+	piUnlock (SYSTEM_FLAGS_KEY);
 
 	// A completar por el alumno
 	// ...
@@ -347,6 +347,14 @@ void ImpactoDetectado (fsm_t* this) {
 
 	printf("ImpactoDetectado\n");
 	fflush(stdout);
+
+	piLock (PLAYER_FLAGS_KEY);
+	flags_player |= FLAG_START_IMPACTO;
+	piUnlock (PLAYER_FLAGS_KEY);
+
+	piLock (SYSTEM_FLAGS_KEY);
+	flags_juego &= ~(FLAG_TARGET_DONE);
+	piUnlock (SYSTEM_FLAGS_KEY);
 
 	// A completar por el alumno
 	// ...
