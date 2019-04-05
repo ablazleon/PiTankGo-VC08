@@ -34,10 +34,9 @@ typedef struct {
 	TipoEfecto efecto_disparo; // Efecto de disparo
 	TipoEfecto efecto_impacto; // Efecto de impacto
 
-	// A completar por el alumno (declaracion del temporizador para control duracion notas)
-	// ...
-	
-	tmr* myTmr; // Mi tmr
+	// Creamos nuestro tmr para player
+	tmr_t* myTmr;
+
 } TipoPlayer;
 
 extern int flags_player;
@@ -61,6 +60,6 @@ void ActualizaPlayer (fsm_t* this);
 void FinalEfecto (fsm_t* this);
 
 // Prototipos de procedimientos de atencion a las interrupciones
-static void timer_player_duracion_nota_actual_isr (union sigval value);
+void timer_player_duracion_nota_actual_isr(union sigval value);
 
 #endif /* PLAYER_H_ */

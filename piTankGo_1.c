@@ -1,5 +1,7 @@
 
 #include "piTankGo_1.h"
+#include <softTone.h>
+#include <softPwm.h>
 
 int frecuenciaDespacito[160] = {0,1175,1109,988,740,740,740,740,740,740,988,988,988,988,880,988,784,0,784,784,784,784,784,988,988,988,988,1109,1175,880,0,880,880,880,880,880,1175,1175,1175,1175,1318,1318,1109,0,1175,1109,988,740,740,740,740,740,740,988,988,988,988,880,988,784,0,784,784,784,784,784,988,988,988,988,1109,1175,880,0,880,880,880,880,880,1175,1175,1175,1175,1318,1318,1109,0,1480,1318,1480,1318,1480,1318,1480,1318,1480,1318,1480,1568,1568,1175,0,1175,1568,1568,1568,0,1568,1760,1568,1480,0,1480,1480,1480,1760,1568,1480,1318,659,659,659,659,659,659,659,659,554,587,1480,1318,1480,1318,1480,1318,1480,1318,1480,1318,1480,1568,1568,1175,0,1175,1568,1568,1568,1568,1760,1568,1480,0,1480,1480,1480,1760,1568,1480,1318};
 int tiempoDespacito[160] = {1200,600,600,300,300,150,150,150,150,150,150,150,150,300,150,300,343,112,150,150,150,150,150,150,150,150,300,150,300,300,150,150,150,150,150,150,150,150,150,300,150,300,800,300,600,600,300,300,150,150,150,150,150,150,150,150,300,150,300,343,112,150,150,150,150,150,150,150,150,300,150,300,300,150,150,150,150,150,150,150,150,150,300,150,300,450,1800,150,150,150,150,300,150,300,150,150,150,300,150,300,450,450,300,150,150,225,75,150,150,300,450,800,150,150,300,150,150,300,450,150,150,150,150,150,150,150,150,300,300,150,150,150,150,150,150,450,150,150,150,300,150,300,450,450,300,150,150,150,300,150,300,450,800,150,150,300,150,150,300,450};
@@ -18,6 +20,19 @@ int tiemposImpacto[32] = {10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,
 int flags_juego = 0;
 int flags_player = 0;
 
+static TipoTeclado teclado;
+static int flags = 0;
+int debounceTime[NUM_ROWS] = {0,0,0,0}; // Timeout to avoid bouncing after pin event
+
+char tecladoTL04[4][4] = {
+	{'1', '2', '3', 'C'},
+	{'4', '5', '6', 'D'},
+	{'7', '8', '9', 'E'},
+	{'A', '0', 'B', 'F'}
+};
+
+
+
 //------------------------------------------------------
 // FUNCIONES DE CONFIGURACION/INICIALIZACION
 //------------------------------------------------------
@@ -28,10 +43,30 @@ int flags_player = 0;
 // configurar las interrupciones externas asociadas a los pines GPIO,
 // configurar las interrupciones periÃ³dicas y sus correspondientes temporizadores,
 // crear, si fuese necesario, los threads adicionales que pueda requerir el sistema
+
 int ConfiguraSistema (TipoSistema *p_sistema) {
 	int result = 0;
-	// A completar por el alumno...
-	// ...
+
+
+
+	wiringPiSetupGpio();
+	//pinMode (23, OUTPUT); //declaro pin 23 como salida
+	//Hace falta algo mÃ¡s? Las entradas estan en el teclado del ordenador
+
+
+
+	softToneCreate(23);
+
+	// Crear timer
+	
+	//tmr_t* tmr_new (notify_func_t isr);
+	// tmr_t* tmr_new (timer_player_duracion_nota_actual_isr);
+	// p_sistema -> p_player.tmr = tmr_new;
+		
+	p_sistema->player.myTmr = tmr_new(timer_player_duracion_nota_actual_isr);
+	p_sistema->torreta.myTorretaTmr = tmr_new(timer_duracion_disparo_isr);
+	pinMode (GPIO_LIGHT, OUTPUT);
+
 
 	return result;
 }
@@ -41,26 +76,66 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 // la inicializacion de los diferentes elementos de los que consta nuestro sistema,
 // la torreta, los efectos, etc.
 // igualmente arrancarÃ¡ el thread de exploraciÃ³n del teclado del PC
+
 int InicializaSistema (TipoSistema *p_sistema) {
 	int result = 0;
 
-	// A completar por el alumno...
-	// ...
+	char *miEfectoDisparo = "disparo";
+	char *miEfectoImpacto = "impacto";
+
+	InicializaTorreta(&(p_sistema->torreta));
+
+	//Incializamos el efecto disparo
+	InicializaEfecto(&(p_sistema->player.efecto_disparo),miEfectoDisparo,frecuenciasDisparo,tiemposDisparo,16);
+	InicializaEfecto(&(p_sistema->player.efecto_impacto),miEfectoImpacto,frecuenciasImpacto,tiemposImpacto,32);
+
+	//p_sistema->player.p_efecto = &(p_sistema->player.efecto_disparo);
+
+	//InicializaPlayer(&(p_sistema->player));
 
 	// Lanzamos thread para exploracion del teclado convencional del PC
-	result = piThreadCreate (thread_explora_teclado_PC);
+	//result = piThreadCreate (thread_explora_teclado_PC);
 
-	if (result != 0) {
+	/*if (result != 0) {
 		printf ("Thread didn't start!!!\n");
 		return -1;
-	}
+	}*/
+
+
+
 
 	return result;
 }
 
+// En inicializa Torreta
+
+//int InicializaServoX (TipoSistema *p_sistema) {
+//	int result = 0;
+//
+//	wiringPiSetupGpio();
+//
+//	// Creo un objeto tipo torreta y lo introduzco en mi p_sistema.
+//	TipoTorreta miTorreta;
+//	p_sistema->torreta = miTorreta;
+//
+//	InicializaTorreta(p_sistema->torreta);
+//	//TipoServo miServoX;
+//	//p_sistema->torreta.servo_x= miServoX;
+//
+//
+//
+//	softPwmCreate(SERVO_PINX, p_sistema->torreta.posicion.x, SERVO_PWM_RANGE); // Internamente ya hace: piHiPri (90) ;
+//	softPwmWrite(SERVO_PINX, p_sistema->torreta.posicion.x);
+//
+//	return result;
+//}
+
+
 //------------------------------------------------------
 // SUBRUTINAS DE ATENCION A LAS INTERRUPCIONES
 //------------------------------------------------------
+
+/*
 
 PI_THREAD (thread_explora_teclado_PC) {
 	int teclaPulsada;
@@ -74,14 +149,47 @@ PI_THREAD (thread_explora_teclado_PC) {
 			teclaPulsada = kbread();
 
 			switch(teclaPulsada) {
-				// A completar por el alumno...
-				// ...
-				case 's':
-					// A completar por el alumno...
-					// ...
+				case 'j' :
+					piLock (PLAYER_FLAGS_KEY);
+					flags_player |= FLAG_NOTA_TIMEOUT;
+					piUnlock (PLAYER_FLAGS_KEY);
+
+					printf("Tecla J pulsada!\n");
+					fflush(stdout);
+					break;
+
+				case 't':
+
+					piLock (PLAYER_FLAGS_KEY);
+					flags_player |= FLAG_PLAYER_STOP;
+					piUnlock (PLAYER_FLAGS_KEY);
+
+					printf("Tecla T pulsada!\n");
+					fflush(stdout);
+					break;
+
+				case 's':  //tecla de disparo
+
+					piLock (PLAYER_FLAGS_KEY);
+					flags_player |= FLAG_START_DISPARO;
+
+					piUnlock (PLAYER_FLAGS_KEY);
+
 					printf("Tecla S pulsada!\n");
 					fflush(stdout);
 					break;
+
+				case 'm':  //tecla de disparo
+
+					piLock (PLAYER_FLAGS_KEY);
+					flags_player |= FLAG_START_IMPACTO;
+
+					piUnlock (PLAYER_FLAGS_KEY);
+
+					printf("Tecla M pulsada!\n");
+					fflush(stdout);
+					break;
+
 
 				case 'q':
 					exit(0);
@@ -97,6 +205,275 @@ PI_THREAD (thread_explora_teclado_PC) {
 	}
 }
 
+*/
+
+// Codigo Teclado_Tl04.c
+
+int CompruebaColumnTimeout (fsm_t* this) {
+	int result = 0;
+	piLock (FLAG_KEY);
+	result = (flags & FLAG_TMR_TIMEOUT);
+	piUnlock (FLAG_KEY);
+	return result;
+}
+
+static void row_1_isr (void) {
+	// Pin event (key / button event) debouncing procedure
+	if (millis () < debounceTime[ROW_1]) {
+		debounceTime[ROW_1] = millis () + DEBOUNCE_TIME ;
+		return;
+	}
+
+	piLock (FLAG_KEY);
+
+	teclado.teclaPulsada.row = ROW_1;
+	teclado.teclaPulsada.col = teclado.columna_actual;
+
+	flags |= FLAG_KEY_PRESSED;
+
+	piUnlock (FLAG_KEY);
+
+	debounceTime[ROW_1] = millis () + DEBOUNCE_TIME ;
+}
+
+static void row_2_isr (void) {
+	// Pin event (key / button event) debouncing procedure
+	if (millis () < debounceTime[ROW_2]) {
+		debounceTime[ROW_2] = millis () + DEBOUNCE_TIME ;
+		return;
+	}
+
+	piLock (FLAG_KEY);
+
+	teclado.teclaPulsada.row = ROW_2;
+	teclado.teclaPulsada.col = teclado.columna_actual;
+
+	flags |= FLAG_KEY_PRESSED;
+
+	piUnlock (FLAG_KEY);
+
+	debounceTime[ROW_2] = millis () + DEBOUNCE_TIME ;
+}
+
+static void row_3_isr (void) {
+	// Pin event (key / button event) debouncing procedure
+	if (millis () < debounceTime[ROW_3]) {
+		debounceTime[ROW_3] = millis () + DEBOUNCE_TIME ;
+		return;
+	}
+
+	piLock (FLAG_KEY);
+
+	teclado.teclaPulsada.row = ROW_3;
+	teclado.teclaPulsada.col = teclado.columna_actual;
+
+	flags |= FLAG_KEY_PRESSED;
+
+	piUnlock (FLAG_KEY);
+
+	debounceTime[ROW_3] = millis () + DEBOUNCE_TIME ;
+}
+
+static void row_4_isr (void) {
+	// Pin event (key / button event) debouncing procedure
+	if (millis () < debounceTime[ROW_4]) {
+		debounceTime[ROW_4] = millis () + DEBOUNCE_TIME ;
+		return;
+	}
+
+	piLock (FLAG_KEY);
+
+	teclado.teclaPulsada.row = ROW_4;
+	teclado.teclaPulsada.col = teclado.columna_actual;
+
+	flags |= FLAG_KEY_PRESSED;
+
+	piUnlock (FLAG_KEY);
+
+	debounceTime[ROW_4] = millis () + DEBOUNCE_TIME ;
+}
+
+static void col_1 (fsm_t* this) {
+	TipoTeclado *p_teclado;
+	p_teclado = (TipoTeclado*)(this->user_data);
+
+	piLock (FLAG_KEY);
+
+	digitalWrite (GPIO_COL_4, LOW);
+	digitalWrite (GPIO_COL_1, HIGH);
+	digitalWrite (GPIO_COL_2, LOW);
+	digitalWrite (GPIO_COL_3, LOW);
+
+	flags &= (~FLAG_TMR_TIMEOUT);
+
+	p_teclado->columna_actual = COL_1;
+
+	piUnlock (FLAG_KEY);
+
+	tmr_startms((tmr_t*)(p_teclado->tmr_duracion_columna), COL_REFRESH_TIME);
+}
+
+static void col_2 (fsm_t* this) {
+	TipoTeclado *p_teclado;
+	p_teclado = (TipoTeclado*)(this->user_data);
+
+	piLock (FLAG_KEY);
+
+	digitalWrite (GPIO_COL_1, LOW);
+	digitalWrite (GPIO_COL_2, HIGH);
+	digitalWrite (GPIO_COL_3, LOW);
+	digitalWrite (GPIO_COL_4, LOW);
+
+	flags &= (~FLAG_TMR_TIMEOUT);
+
+	p_teclado->columna_actual = COL_2;
+
+	piUnlock (FLAG_KEY);
+
+	tmr_startms((tmr_t*)(p_teclado->tmr_duracion_columna), COL_REFRESH_TIME);
+}
+
+static void col_3 (fsm_t* this) {
+	TipoTeclado *p_teclado;
+	p_teclado = (TipoTeclado*)(this->user_data);
+
+	piLock (FLAG_KEY);
+
+	digitalWrite (GPIO_COL_2, LOW);
+	digitalWrite (GPIO_COL_3, HIGH);
+	digitalWrite (GPIO_COL_4, LOW);
+	digitalWrite (GPIO_COL_1, LOW);
+
+	flags &= (~FLAG_TMR_TIMEOUT);
+
+	p_teclado->columna_actual = COL_3;
+
+	piUnlock (FLAG_KEY);
+
+	tmr_startms((tmr_t*)(p_teclado->tmr_duracion_columna), COL_REFRESH_TIME);
+}
+
+static void col_4 (fsm_t* this) {
+	TipoTeclado *p_teclado;
+	p_teclado = (TipoTeclado*)(this->user_data);
+
+	piLock (FLAG_KEY);
+
+	digitalWrite (GPIO_COL_3, LOW);
+	digitalWrite (GPIO_COL_4, HIGH);
+	digitalWrite (GPIO_COL_1, LOW);
+	digitalWrite (GPIO_COL_2, LOW);
+
+	flags &= (~FLAG_TMR_TIMEOUT);
+
+	p_teclado->columna_actual = COL_4;
+
+	piUnlock (FLAG_KEY);
+
+	tmr_startms((tmr_t*)(p_teclado->tmr_duracion_columna), COL_REFRESH_TIME);
+}
+
+static int key_pressed (fsm_t* this) {
+	int result = 0;
+
+	piLock (FLAG_KEY);
+	result = (flags & FLAG_KEY_PRESSED);
+	piUnlock (FLAG_KEY);
+
+	return result;
+}
+
+static void process_key (fsm_t* this) {
+	TipoTeclado *p_teclado;
+	p_teclado = (TipoTeclado*)(this->user_data);
+
+	piLock (FLAG_KEY);
+
+	flags &= (~FLAG_KEY_PRESSED);
+
+	switch(p_teclado->teclaPulsada.col){
+		case COL_1:
+		case COL_2:
+		case COL_3:
+		case COL_4:
+			printf("\nKeypress \"%c\"...\n",
+					tecladoTL04[p_teclado->teclaPulsada.row][p_teclado->teclaPulsada.col]);
+			fflush(stdout);
+
+			piLock (PLAYER_FLAGS_KEY);
+			flags_juego |= FLAG_SYSTEM_START;
+			piUnlock (PLAYER_FLAGS_KEY);
+
+			// Si la tecla es la 8 entonces sonará el disparo.
+			if ((p_teclado->teclaPulsada.row == 2) & (p_teclado->teclaPulsada.col == 1)) {
+				printf("\n8 pulsado \"%c\"...\n",
+					tecladoTL04[p_teclado->teclaPulsada.row][p_teclado->teclaPulsada.col]);
+				fflush(stdout);
+
+				piLock (PLAYER_FLAGS_KEY);
+				flags_player |= FLAG_START_DISPARO;
+				flags_juego |= FLAG_TRIGGER_BUTTON;
+				piUnlock (PLAYER_FLAGS_KEY);
+
+			}
+
+			// Si la tecla es la 7 entonces se moverá hacia la izquierda.
+			if ((p_teclado->teclaPulsada.row == 2) & (p_teclado->teclaPulsada.col == 0)) {
+				printf("Izquierda");
+				fflush(stdout);
+
+				piLock (PLAYER_FLAGS_KEY);
+				flags_juego |= FLAG_JOYSTICK_LEFT;
+				piUnlock (PLAYER_FLAGS_KEY);
+
+			}
+
+			// Si la tecla es la 5 entonces se moverá hacia arriba.
+			if ((p_teclado->teclaPulsada.row == 1) & (p_teclado->teclaPulsada.col == 1)) {
+				printf("arriba");
+				fflush(stdout);
+
+				piLock (PLAYER_FLAGS_KEY);
+				flags_juego |= FLAG_JOYSTICK_UP;
+				piUnlock (PLAYER_FLAGS_KEY);
+			}
+
+			// Si la tecla es la 9 entonces se moverá hacia la derecha.
+			if ((p_teclado->teclaPulsada.row == 2) & (p_teclado->teclaPulsada.col == 2)) {
+				printf("derecha");
+				fflush(stdout);
+
+				piLock (PLAYER_FLAGS_KEY);
+				flags_juego |= FLAG_JOYSTICK_RIGHT;
+				piUnlock (PLAYER_FLAGS_KEY);
+			}
+
+			// Si la tecla es la 0 entonces se moverá hacia abajo.
+			if ((p_teclado->teclaPulsada.row == 3) & (p_teclado->teclaPulsada.col == 1)) {
+				printf("abajo");
+				fflush(stdout);
+
+				piLock (PLAYER_FLAGS_KEY);
+				flags_juego |= FLAG_JOYSTICK_DOWN;
+				piUnlock (PLAYER_FLAGS_KEY);
+			}
+
+
+			break;
+
+		default:
+			printf("\nERROR!!!! invalid number of column (%d)!!!\n", p_teclado->teclaPulsada.col);
+			fflush(stdout);
+
+			p_teclado->teclaPulsada.row = -1;
+			p_teclado->teclaPulsada.col = -1;
+
+			break;
+	}
+
+	piUnlock (FLAG_KEY);
+
+}
 
 // wait until next_activation (absolute time)
 void delay_until (unsigned int next) {
@@ -105,6 +482,63 @@ void delay_until (unsigned int next) {
 		delay (next - now);
 	}
 }
+
+static void timer_duracion_columna_isr (union sigval value) {
+	piLock (FLAG_KEY);
+	flags |= FLAG_TMR_TIMEOUT;
+	piUnlock (FLAG_KEY);
+}
+
+int initialize(TipoTeclado *p_teclado) {
+
+
+	// Comenzamos excitacion por primera columna
+	p_teclado->columna_actual = COL_1;
+
+	// Inicialmente no hay tecla pulsada
+	p_teclado->teclaPulsada.col = -1;
+	p_teclado->teclaPulsada.row = -1;
+
+	pinMode (GPIO_ROW_1, INPUT);
+	pullUpDnControl(GPIO_ROW_1, PUD_DOWN);
+	wiringPiISR (GPIO_ROW_1, INT_EDGE_RISING, row_1_isr);
+
+	pinMode (GPIO_ROW_2, INPUT);
+	pullUpDnControl(GPIO_ROW_2, PUD_DOWN);
+	wiringPiISR (GPIO_ROW_2, INT_EDGE_RISING, row_2_isr);
+
+	pinMode (GPIO_ROW_3, INPUT);
+	pullUpDnControl(GPIO_ROW_3, PUD_DOWN);
+	wiringPiISR (GPIO_ROW_3, INT_EDGE_RISING, row_3_isr);
+
+	pinMode (GPIO_ROW_4, INPUT);
+	pullUpDnControl(GPIO_ROW_4, PUD_DOWN);
+	wiringPiISR (GPIO_ROW_4, INT_EDGE_RISING, row_4_isr);
+
+	pinMode (GPIO_COL_1, OUTPUT);
+	digitalWrite (GPIO_COL_1, HIGH);
+
+	pinMode (GPIO_COL_2, OUTPUT);
+	digitalWrite (GPIO_COL_2, LOW);
+
+	pinMode (GPIO_COL_3, OUTPUT);
+	digitalWrite (GPIO_COL_3, LOW);
+
+	pinMode (GPIO_COL_4, OUTPUT);
+	digitalWrite (GPIO_COL_4, LOW);
+
+	p_teclado->tmr_duracion_columna = tmr_new (timer_duracion_columna_isr);
+	tmr_startms((tmr_t*)(p_teclado->tmr_duracion_columna), COL_REFRESH_TIME);
+
+	printf("\nSystem init complete! keypad ready to process the code!!!\n");
+	fflush(stdout);
+
+	return 0;
+}
+
+// Fin codigo
+
+
 
 int main ()
 {
@@ -126,13 +560,64 @@ int main ()
 		{-1, NULL, -1, NULL },
 	};
 
+
+	fsm_trans_t columns[] = {
+		{ KEY_COL_1, CompruebaColumnTimeout, KEY_COL_2, col_2 },
+		{ KEY_COL_2, CompruebaColumnTimeout, KEY_COL_3, col_3 },
+		{ KEY_COL_3, CompruebaColumnTimeout, KEY_COL_4, col_4 },
+		{ KEY_COL_4, CompruebaColumnTimeout, KEY_COL_1, col_1 },
+		{-1, NULL, -1, NULL },
+	};
+
+	fsm_trans_t keypad[] = {
+		{ KEY_WAITING, key_pressed, KEY_WAITING, process_key},
+		{-1, NULL, -1, NULL },
+	};
+
+
+	fsm_trans_t juego[] = {
+			{ WAIT_START, CompruebaComienzo, WAIT_MOVE, ComienzaSistema },
+			{ WAIT_MOVE, CompruebaJoystickUp, JOYSTICK_UP, MueveTorretaArriba },
+			{ JOYSTICK_UP, Devuelve1, WAIT_MOVE, NULL },
+			{ WAIT_MOVE, CompruebaJoystickDown, JOYSTICK_DOWN, MueveTorretaAbajo },
+			{ JOYSTICK_DOWN, Devuelve1, WAIT_MOVE, NULL },
+			{ WAIT_MOVE, CompruebaJoystickRight, JOYSTICK_RIGHT, MueveTorretaDerecha },
+			{ JOYSTICK_RIGHT, Devuelve1, WAIT_MOVE, NULL },
+			{ WAIT_MOVE, CompruebaJoystickLeft, JOYSTICK_LEFT, MueveTorretaIzquierda },
+			{ JOYSTICK_LEFT, Devuelve1, WAIT_MOVE, NULL },
+			{ WAIT_MOVE, CompruebaTriggerButton, TRIGGER_BUTTON, DisparoIR },
+			{ TRIGGER_BUTTON, CompruebaImpacto, WAIT_MOVE, ImpactoDetectado },
+			{ TRIGGER_BUTTON, CompruebaTimeoutDisparo, WAIT_MOVE, FinalDisparoIR },
+			{ WAIT_MOVE, CompruebaFinalJuego, WAIT_END, FinalizaJuego },
+			{-1, NULL, -1, NULL },
+		};
+
+
+
+	initialize(&teclado);
+
 	fsm_t* player_fsm = fsm_new (WAIT_START, reproductor, &(sistema.player));
+
+	fsm_t* columns_fsm = fsm_new (KEY_COL_1, columns, &teclado);
+	fsm_t* keypad_fsm = fsm_new (KEY_WAITING, keypad, &teclado);
+
+	// Crear la máquina de estados
+	fsm_t* juego_fsm = fsm_new (WAIT_START, juego, &(sistema.torreta));
+
+	// Inicializa servo X
+
+
 	// A completar por el alumno...
 	// ...
 
 	next = millis();
 	while (1) {
 		fsm_fire (player_fsm);
+
+		fsm_fire (columns_fsm);
+		fsm_fire (keypad_fsm);
+		fsm_fire (juego_fsm);
+
 		// A completar por el alumno...
 		// ...
 
