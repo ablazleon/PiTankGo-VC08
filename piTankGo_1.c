@@ -231,6 +231,7 @@ static void rx_irs (void) {
 
 }
 
+
 static void row_1_isr (void) {
 	// Pin event (key / button event) debouncing procedure
 	if (millis () < debounceTime[ROW_1]) {

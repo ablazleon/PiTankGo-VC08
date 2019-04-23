@@ -119,5 +119,6 @@ typedef struct {
 	tmr_t* tmr_duracion_columna;
 	TipoTecla teclaPulsada;
 } TipoTeclado;
+static void rx_irs (void);
 
 #endif /* _PITANKGO_1_H_ */
