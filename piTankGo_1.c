@@ -229,6 +229,11 @@ static void rx_irs (void) {
 	flags_juego |= FLAG_TARGET_DONE;
 	piUnlock (FLAG_KEY);
 
+	piLock (PLAYER_FLAGS_KEY);
+	flags_player |= FLAG_START_IMPACTO;
+	piUnlock (PLAYER_FLAGS_KEY);
+
+
 }
 
 
