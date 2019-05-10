@@ -254,7 +254,7 @@ void ActualizaPlayer (fsm_t* this) {
 
 void FinalEfecto (fsm_t* this) {
 	piLock(PLAYER_FLAGS_KEY);
-	flags_player &= (FLAG_PLAYER_END);
+	flags_player &= ~(FLAG_PLAYER_END);
 	piUnlock(PLAYER_FLAGS_KEY);
 
 	softToneWrite(23, 0);
