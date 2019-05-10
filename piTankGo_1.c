@@ -23,6 +23,7 @@ int flags_player = 0;
 static TipoTeclado teclado;
 static int flags = 0;
 int debounceTime[NUM_ROWS] = {0,0,0,0}; // Timeout to avoid bouncing after pin event
+int debounceTimeAlmacen;
 
 char tecladoTL04[4][4] = {
 	{'1', '2', '3', 'C'},
@@ -225,9 +226,17 @@ int CompruebaColumnTimeout (fsm_t* this) {
 
 static void rx_irs (void) {
 
-	piLock (FLAG_KEY);
+
+	if (millis () < debounceTimeAlmacen) {
+		debounceTimeAlmacen = millis () + DEBOUNCE_TIME_IMPACTO ;
+		return;
+	}
+
+	debounceTimeAlmacen = millis () + DEBOUNCE_TIME_IMPACTO ;
+
+	piLock (SYSTEM_FLAGS_KEY);
 	flags_juego |= FLAG_TARGET_DONE;
-	piUnlock (FLAG_KEY);
+	piUnlock (SYSTEM_FLAGS_KEY);
 
 	piLock (PLAYER_FLAGS_KEY);
 	flags_player |= FLAG_START_IMPACTO;

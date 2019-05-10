@@ -72,6 +72,7 @@ PI_THREAD(thread_explora_teclado_PC);
 
 #define CLK_MS 			5
 #define	DEBOUNCE_TIME	200
+#define	DEBOUNCE_TIME_IMPACTO	1000
 #define COL_REFRESH_TIME 25
 
 #define	FLAG_KEY			0
