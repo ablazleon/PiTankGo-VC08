@@ -42,7 +42,6 @@ int InicializaEfecto (TipoEfecto *p_efecto, char *nombre, int *array_frecuencias
 	}
 
 	p_efecto->num_notas = num_notas;
-
 	return p_efecto->num_notas;
 }
 
@@ -257,6 +256,8 @@ void FinalEfecto (fsm_t* this) {
 	piLock(PLAYER_FLAGS_KEY);
 	flags_player &= (FLAG_PLAYER_END);
 	piUnlock(PLAYER_FLAGS_KEY);
+
+	softToneWrite(23, 0);
 }
 
 //------------------------------------------------------
