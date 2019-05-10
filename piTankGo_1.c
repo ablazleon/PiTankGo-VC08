@@ -38,10 +38,10 @@ char tecladoTL04[4][4] = {
 //------------------------------------------------------
 
 // int ConfiguracionSistema (TipoSistema *p_sistema): procedimiento de configuracion del sistema.
-// Realizará, entra otras, todas las operaciones necesarias para:
-// configurar el uso de posibles librerías (e.g. Wiring Pi),
+// RealizarÃ¡, entra otras, todas las operaciones necesarias para:
+// configurar el uso de posibles librerÃ­as (e.g. Wiring Pi),
 // configurar las interrupciones externas asociadas a los pines GPIO,
-// configurar las interrupciones periódicas y sus correspondientes temporizadores,
+// configurar las interrupciones periÃ³dicas y sus correspondientes temporizadores,
 // crear, si fuese necesario, los threads adicionales que pueda requerir el sistema
 
 int ConfiguraSistema (TipoSistema *p_sistema) {
@@ -51,7 +51,7 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 
 	wiringPiSetupGpio();
 	//pinMode (23, OUTPUT); //declaro pin 23 como salida
-	//Hace falta algo más? Las entradas estan en el teclado del ordenador
+	//Hace falta algo mÃ¡s? Las entradas estan en el teclado del ordenador
 
 
 
@@ -67,9 +67,9 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 	p_sistema->torreta.myTorretaTmr = tmr_new(timer_duracion_disparo_isr);
 	pinMode (GPIO_LIGHT, OUTPUT);
 
-	pinMode (GPIO_RX, INPUT);
-	pullUpDnControl(GPIO_RX, PUD_DOWN);
-	wiringPiISR (GPIO_RX, INT_EDGE_RISING, rx_irs);
+	pinMode (IR_RX_PIN, INPUT);
+	pullUpDnControl(IR_RX_PIN, PUD_DOWN);
+	wiringPiISR (IR_RX_PIN, INT_EDGE_RISING, rx_irs);
 
 
 
@@ -78,10 +78,10 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 }
 
 // int InicializaSistema (TipoSistema *p_sistema): procedimiento de inicializacion del sistema.
-// Realizará, entra otras, todas las operaciones necesarias para:
+// RealizarÃ¡, entra otras, todas las operaciones necesarias para:
 // la inicializacion de los diferentes elementos de los que consta nuestro sistema,
 // la torreta, los efectos, etc.
-// igualmente arrancará el thread de exploración del teclado del PC
+// igualmente arrancarÃ¡ el thread de exploraciÃ³n del teclado del PC
 
 int InicializaSistema (TipoSistema *p_sistema) {
 	int result = 0;
@@ -424,7 +424,7 @@ static void process_key (fsm_t* this) {
 			flags_juego |= FLAG_SYSTEM_START;
 			piUnlock (PLAYER_FLAGS_KEY);
 
-			// Si la tecla es la 8 entonces sonar� el disparo.
+			// Si la tecla es la 8 entonces sonará el disparo.
 			if ((p_teclado->teclaPulsada.row == 2) & (p_teclado->teclaPulsada.col == 1)) {
 				printf("\n8 pulsado \"%c\"...\n",
 					tecladoTL04[p_teclado->teclaPulsada.row][p_teclado->teclaPulsada.col]);
@@ -437,7 +437,7 @@ static void process_key (fsm_t* this) {
 
 			}
 
-			// Si la tecla es la 7 entonces se mover� hacia la izquierda.
+			// Si la tecla es la 7 entonces se moverá hacia la izquierda.
 			if ((p_teclado->teclaPulsada.row == 2) & (p_teclado->teclaPulsada.col == 0)) {
 				printf("Izquierda");
 				fflush(stdout);
@@ -448,7 +448,7 @@ static void process_key (fsm_t* this) {
 
 			}
 
-			// Si la tecla es la 5 entonces se mover� hacia arriba.
+			// Si la tecla es la 5 entonces se moverá hacia arriba.
 			if ((p_teclado->teclaPulsada.row == 1) & (p_teclado->teclaPulsada.col == 1)) {
 				printf("arriba");
 				fflush(stdout);
@@ -458,7 +458,7 @@ static void process_key (fsm_t* this) {
 				piUnlock (PLAYER_FLAGS_KEY);
 			}
 
-			// Si la tecla es la 9 entonces se mover� hacia la derecha.
+			// Si la tecla es la 9 entonces se moverá hacia la derecha.
 			if ((p_teclado->teclaPulsada.row == 2) & (p_teclado->teclaPulsada.col == 2)) {
 				printf("derecha");
 				fflush(stdout);
@@ -468,7 +468,7 @@ static void process_key (fsm_t* this) {
 				piUnlock (PLAYER_FLAGS_KEY);
 			}
 
-			// Si la tecla es la 0 entonces se mover� hacia abajo.
+			// Si la tecla es la 0 entonces se moverá hacia abajo.
 			if ((p_teclado->teclaPulsada.row == 3) & (p_teclado->teclaPulsada.col == 1)) {
 				printf("abajo");
 				fflush(stdout);
@@ -621,7 +621,7 @@ int main ()
 	fsm_t* columns_fsm = fsm_new (KEY_COL_1, columns, &teclado);
 	fsm_t* keypad_fsm = fsm_new (KEY_WAITING, keypad, &teclado);
 
-	// Crear la m�quina de estados
+	// Crear la máquina de estados
 	fsm_t* juego_fsm = fsm_new (WAIT_START, juego, &(sistema.torreta));
 
 	// Inicializa servo X
