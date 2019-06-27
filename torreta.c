@@ -354,6 +354,7 @@ void ImpactoDetectado (fsm_t* this) {
 
 	piLock (SYSTEM_FLAGS_KEY);
 	flags_juego &= ~(FLAG_TARGET_DONE);
+	flags_juego &= ~(FLAG_SHOOT_TIMEOUT);
 	piUnlock (SYSTEM_FLAGS_KEY);
 
 	// A completar por el alumno
